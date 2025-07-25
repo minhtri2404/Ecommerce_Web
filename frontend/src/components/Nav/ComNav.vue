@@ -48,6 +48,7 @@
         <!-- Dropdown menu -->
         <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-36 bg-white shadow-md border rounded-md z-50">
           <router-link v-if="!isAdmin" to="/my-orders" class="block px-4 py-2 hover:bg-gray-100 text-sm">🛒 My Orders</router-link>
+          <router-link v-if="!isUser" to="/admin-dashboard" class="block px-4 py-2 hover:bg-gray-100 text-sm">🛒 Dashboard</router-link>
           <button @click="logout" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">🚪 Logout</button>
         </div>
       </div>
@@ -121,5 +122,6 @@ function toggleDropdown() {
 const { user, logout } = useAuth()
 const isLoggedIn = computed(() => !!user.value)
 const isAdmin = computed(() => user.value?.role === 'admin')
+const isUser = computed(() => user.value?.role === 'customer')
 const userName = computed(() => user.value?.name || 'customer')
 </script>

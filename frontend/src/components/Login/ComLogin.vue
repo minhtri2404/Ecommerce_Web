@@ -77,7 +77,7 @@ const handleSubmit = async (e) => {
 
       setTimeout(() => {
         if (res.data.user.role === 'admin') {
-          router.push('/admin/dashboard');
+          router.push('/');
         } else {
           router.push('/');
         }
