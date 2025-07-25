@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/components/Login/ComLogin.vue'
 import Register from '@/components/Register/ComRegister.vue'
-
+import Home from '../pages/ComHome.vue'
 const routes = [
     {
       path: '/login',
@@ -16,6 +16,12 @@ const routes = [
       component: Register,
       meta: { hideNavBar: true }
     },
+
+    {
+      path: '/',
+      name: 'Home',
+      component: Home,
+    }
 
     
 ]

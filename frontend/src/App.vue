@@ -11,7 +11,6 @@ import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import NavBar from '@/components/Nav/ComNav.vue'
 import HeroSection from '@/components/Nav/ComHeroSection.vue'
-
 const route = useRoute()
 
 // Ẩn NavBar nếu route.meta.hideNavBar = true
