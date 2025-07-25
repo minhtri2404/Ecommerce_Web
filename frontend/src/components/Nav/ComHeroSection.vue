@@ -1,6 +1,6 @@
 <template>
   <section class="bg-[#f9f8f4] overflow-hidden relative">
-    <div class="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between">
+    <div class="container mx-auto px-8 py-24 flex flex-col md:flex-row items-center justify-between">
       <!-- Left: Text content -->
       <div class="md:w-1/2 space-y-6 text-center md:text-left">
         <p class="uppercase text-sm tracking-widest text-red-500">Summer Collection</p>
@@ -11,7 +11,7 @@
           {{ currentSlide.description }}
         </p>
         <button class="bg-black text-white px-6 py-3 uppercase tracking-wide font-medium hover:bg-gray-800 transition">
-          Shop Now →
+          <router-link to="/shop"> Shop Now →</router-link>
         </button>
 
         <!-- Socials -->
@@ -26,7 +26,7 @@
       <!-- Right: Image -->
       <div class="md:w-1/2 relative mt-12 md:mt-0">
         <div class="absolute bg-pink-100 rounded-full w-[380px] h-[380px] top-0 right-0 -z-10 translate-x-1/4 -translate-y-1/4"></div>
-        <img :src="currentSlide.image" :alt="currentSlide.title" class="w-full max-w-md mx-auto" />
+        <img :src="currentSlide.image" :alt="currentSlide.title" class="w-full max-w-lg mx-auto" />
       </div>
     </div>
 
