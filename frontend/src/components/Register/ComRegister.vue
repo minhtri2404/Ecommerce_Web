@@ -1,5 +1,13 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50">
+    <!-- Alert Toast -->
+    <Alert
+      v-model="showAlert"
+      :type="alertType"
+      :title="alertTitle"
+      :message="alertMessage"
+      :duration="3000"
+    />
     <form
       class="flex flex-col gap-4 items-start p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white"
       @submit.prevent="handleSubmit"
@@ -40,12 +48,26 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/auth/userAuth'
+import Alert from '@/components/Alert/ComAlert.vue';
 
 const { login } = useAuth()
 const name = ref('');
 const email = ref('');
 const password = ref('');
 const router = useRouter();
+
+// ALERT state
+const showAlert = ref(false);
+const alertType = ref('success'); // success | error
+const alertTitle = ref('');
+const alertMessage = ref('');
+
+const showToast = (type, title, message) => {
+  alertType.value = type;
+  alertTitle.value = title;
+  alertMessage.value = message;
+  showAlert.value = true;
+};
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -59,14 +81,17 @@ const handleSubmit = async (e) => {
 
     login(res.data.user, res.data.token)
 
-    alert("Đăng ký thành công!")
-    router.push('/login')
+    showToast('success', 'Đăng ký thành công!', 'Bạn sẽ được chuyển hướng...');
+     // đợi 1s cho người dùng đọc rồi chuyển hướng
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000)
 
   } catch (error) {
     if (error.response && !error.response.data.success) {
-        alert(error.response.data.error) // ← hiện đúng lỗi từ backend
+        showToast('error', 'Đăng ký thất bại', error.response.data.error)
     }else {
-        alert("Đăng ký thất bại, vui lòng thử lại sau!")
+        showToast('error', 'Lỗi hệ thống', 'Vui lòng thử lại sau!')
     }
   }
 };

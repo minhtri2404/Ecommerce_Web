@@ -1,5 +1,14 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50">
+     <!-- Alert Toast -->
+    <Alert
+      v-model="showAlert"
+      :type="alertType"
+      :title="alertTitle"
+      :message="alertMessage"
+      :duration="3000"
+    />
+
     <form
       class="flex flex-col gap-4 items-start p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white"
       @submit.prevent="handleSubmit"
@@ -35,12 +44,25 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/auth/userAuth'
+import Alert from '@/components/Alert/ComAlert.vue';
 
 const { login: saveAuthData } = useAuth()
 const email = ref('');
 const password = ref('');
 const router = useRouter();
 
+// ALERT state
+const showAlert = ref(false);
+const alertType = ref('success'); // success | error
+const alertTitle = ref('');
+const alertMessage = ref('');
+
+const showToast = (type, title, message) => {
+  alertType.value = type;
+  alertTitle.value = title;
+  alertMessage.value = message;
+  showAlert.value = true;
+};
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -50,19 +72,22 @@ const handleSubmit = async (e) => {
       password: password.value
     })
     if (res.data.success) {
-      alert("Đăng nhập thành công!")
+      showToast('success', 'Đăng nhập thành công!', 'Bạn sẽ được chuyển hướng...');
       saveAuthData(res.data.user, res.data.token);
-    }
-    if (res.data.user.role === 'admin') {
-        router.push('/admin/dashboard');
-    } else{
-        router.push('/');
+
+      setTimeout(() => {
+        if (res.data.user.role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/');
+        }
+      }, 2000); // đợi alert hiển thị một chút
     }
   } catch (error) {
     if (error.response && !error.response.data.success) {
-        alert(error.response.data.error) // ← hiện đúng lỗi từ backend
+        showToast('error', 'Lỗi đăng nhập', error.response.data.error);
     }else {
-        alert("Đăng nhập thất bại, vui lòng thử lại sau!")
+        showToast('error', 'Thất bại', 'Không thể đăng nhập. Vui lòng thử lại sau!');
     }
   }
 }
