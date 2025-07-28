@@ -2,17 +2,19 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // Layouts
 import CustomerLayout from '../pages/customer/ComCustomer.vue'
-import AdminLayout from '../pages/admin/ComAdmin.vue' // ✅ layout riêng cho admin
+import AdminLayout from '../pages/admin/ComAdmin.vue'
 
 // Pages
 import Home from '@/pages/ComHome.vue'
 import Login from '@/components/Login/ComLogin.vue'
 import Register from '@/components/Register/ComRegister.vue'
 import Shop from '../pages/ComProduct.vue'
-import AdminDashboard from '../pages/admin/ComAdmin.vue'
+import AdminDashboard from '../pages/admin/ComDashboard.vue' // ✅ Chỉ là page
+import CategoryList from '../pages/admin/category/categoryList.vue'
 const routes = [
   {
     path: '/',
+    name: 'CustomerLayout',
     component: CustomerLayout,
     children: [
       { path: '', name: 'Home', component: Home },
@@ -27,7 +29,8 @@ const routes = [
     path: '/admin-dashboard',
     component: AdminLayout,
     children: [
-      { path: '', name: 'AdminDashboard', component: AdminDashboard },
+      { path: '', name: 'AdminDashboard', component: AdminDashboard }, // ✅ chỉ là page
+      { path: 'category', name: CategoryList, component: CategoryList} 
       // Các trang admin khác
     ]
   }
