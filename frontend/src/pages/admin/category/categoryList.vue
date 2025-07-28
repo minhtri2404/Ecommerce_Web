@@ -19,7 +19,7 @@
         class="border border-gray-300 rounded px-4 py-2 w-full md:w-1/3"
       />
       <router-link to="/admin-dashboard/add-category">
-        <button class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded w-full md:w-auto">
+        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full md:w-auto">
           Thêm danh mục mới
         </button>
       </router-link>
@@ -38,16 +38,16 @@
         </thead>
         <tbody>
           <tr
-            v-for="item in filteredCategories"
+            v-for="item in paginatedCategories"
             :key="item.id"
-            class="border-b hover:bg-gray-50 transition"
+            class="border-b last:border-b-0 hover:bg-gray-50"
           >
             <td class="px-6 py-4">{{ item.sno }}</td>
             <td class="px-6 py-4">{{ item.categoryName }}</td>
             <td class="px-6 py-4">{{ item.categoryDescription }}</td>
             <td class="px-6 py-4 text-center">
               <button
-                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded mr-2"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded mr-2"
                 @click="editCategory(item.id)"
               >
                 Edit
@@ -62,6 +62,43 @@
           </tr>
         </tbody>
       </table>
+
+       <!-- Pagination -->
+    <div class="mt-6 flex justify-end">
+      <div class="flex items-center gap-4 text-gray-500 font-medium">
+        <!-- Previous -->
+        <button @click="prevPage" :disabled="currentPage === 1" aria-label="prev"
+          class="rounded-full bg-slate-200/50 disabled:opacity-50">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <path d="M22.499 12.85a.9.9 0 0 1 .57.205l.067.06a.9.9 0 0 1 .06 1.206l-.06.066-5.585 5.586-.028.027.028.027 5.585 5.587a.9.9 0 0 1 .06 1.207l-.06.066a.9.9 0 0 1-1.207.06l-.066-.06-6.25-6.25a1 1 0 0 1-.158-.212l-.038-.08a.9.9 0 0 1-.03-.606l.03-.083a1 1 0 0 1 .137-.226l.06-.066 6.25-6.25a.9.9 0 0 1 .635-.263Z"
+              fill="#475569" stroke="#475569" stroke-width=".078" />
+          </svg>
+        </button>
+
+        <!-- Page Numbers -->
+        <div class="flex items-center gap-2 text-sm font-medium">
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="goToPage(page)"
+            :class="[ 'h-10 w-10 flex items-center justify-center aspect-square',
+              currentPage === page
+                ? 'text-indigo-500 border border-indigo-200 rounded-full'
+                : ''
+            ]"
+          >{{ page }}</button>
+        </div>
+
+          <!-- Next -->
+        <button @click="nextPage" :disabled="currentPage === totalPages" aria-label="next"
+          class="rounded-full bg-slate-200/50 disabled:opacity-50">
+            <svg class="rotate-180" width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <path d="M22.499 12.85a.9.9 0 0 1 .57.205l.067.06a.9.9 0 0 1 .06 1.206l-.06.066-5.585 5.586-.028.027.028.027 5.585 5.587a.9.9 0 0 1 .06 1.207l-.06.066a.9.9 0 0 1-1.207.06l-.066-.06-6.25-6.25a1 1 0 0 1-.158-.212l-.038-.08a.9.9 0 0 1-.03-.606l.03-.083a1 1 0 0 1 .137-.226l.06-.066 6.25-6.25a.9.9 0 0 1 .635-.263Z"
+                fill="#475569" stroke="#475569" stroke-width=".078" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
       <!-- Loading -->
       <div v-if="loading" class="p-4 text-center text-gray-500">Loading...</div>
@@ -82,6 +119,8 @@ import Alert from '@/components/Alert/ComAlert.vue';
 const categories = ref([])
 const loading = ref(false)
 const search = ref('')
+const currentPage = ref(1)
+const itemsPerPage = 5
 
 // ALERT state
 const showAlert = ref(false);
@@ -129,6 +168,26 @@ const filteredCategories = computed(() =>
     category.categoryName.toLowerCase().includes(search.value.toLowerCase())
   )
 )
+
+//Phân trang
+const totalPages = computed(() =>
+  Math.ceil(filteredCategories.value.length / itemsPerPage)
+)
+
+const paginatedCategories = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return filteredCategories.value.slice(start, end)
+})
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
+
+const prevPage = () => goToPage(currentPage.value - 1)
+const nextPage = () => goToPage(currentPage.value + 1)
 
 onMounted(fetchCategories)
 </script>

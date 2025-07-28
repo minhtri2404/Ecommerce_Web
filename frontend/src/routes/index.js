@@ -11,6 +11,7 @@ import Register from '@/components/Register/ComRegister.vue'
 import Shop from '../pages/ComProduct.vue'
 import AdminDashboard from '../pages/admin/ComDashboard.vue' // ✅ Chỉ là page
 import CategoryList from '../pages/admin/category/categoryList.vue'
+import AddCategory from '../pages/admin/category/categoryAdd.vue'
 const routes = [
   {
     path: '/',
@@ -30,7 +31,9 @@ const routes = [
     component: AdminLayout,
     children: [
       { path: '', name: 'AdminDashboard', component: AdminDashboard }, // ✅ chỉ là page
-      { path: 'category', name: CategoryList, component: CategoryList} 
+      { path: 'category', name: CategoryList, component: CategoryList},
+      { path: 'add-category', name: AddCategory, component: AddCategory} 
+
       // Các trang admin khác
     ]
   }

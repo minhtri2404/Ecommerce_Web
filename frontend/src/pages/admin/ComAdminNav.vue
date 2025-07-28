@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white transition-all duration-300">
+  <div class="flex items-center justify-between pl-6 pr-4 md:pl-10 md:pr-8 border-b border-gray-300 py-3 bg-white">
     <h1 class="text-3xl font-bold text-orange-600">LOGO</h1>
     <div class="flex items-center gap-5 text-gray-500">
       <p>Hi! {{ user?.name || 'Admin' }}</p>

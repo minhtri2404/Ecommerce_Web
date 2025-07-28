@@ -9,6 +9,12 @@ class CategoryController {
                 return res.status(400).json({ success: false, error: 'Tất cả trường không được bỏ trống' })
             }
 
+            // Kiểm tra xem danh mục đã tồn tại chưa
+            const existingCategory = await Category.findOne({categoryName})
+            if(existingCategory){
+                return res.status(400).json({ success: false, error: 'Danh mục đã tồn tại' })
+            }
+
             const newCategory = new Category({categoryName, categoryDescription})
             await newCategory.save()
 
