@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // Layouts
 import CustomerLayout from '../pages/customer/ComCustomer.vue'
+import AdminLayout from '../pages/admin/ComAdmin.vue' // ✅ layout riêng cho admin
 
 // Pages
 import Home from '@/pages/ComHome.vue'
@@ -9,7 +10,6 @@ import Login from '@/components/Login/ComLogin.vue'
 import Register from '@/components/Register/ComRegister.vue'
 import Shop from '../pages/ComProduct.vue'
 import AdminDashboard from '../pages/admin/ComAdmin.vue'
-
 const routes = [
   {
     path: '/',
@@ -25,7 +25,7 @@ const routes = [
 
   {
     path: '/admin-dashboard',
-    component: AdminDashboard,
+    component: AdminLayout,
     children: [
       { path: '', name: 'AdminDashboard', component: AdminDashboard },
       // Các trang admin khác
