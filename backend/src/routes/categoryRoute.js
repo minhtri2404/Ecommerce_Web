@@ -5,5 +5,6 @@ const authMiddleware = require("../middleware/authMiddleware")
 
 router.post("/add", authMiddleware, categoryController.addCategory)
 router.get("/", authMiddleware, categoryController.getAllCategories)
-
+router.get('/:id', authMiddleware, categoryController.getCategories)
+router.put('/:id', authMiddleware, categoryController.updateCategory)
 module.exports = router;

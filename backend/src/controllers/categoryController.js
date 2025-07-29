@@ -41,6 +41,47 @@ class CategoryController {
             return res.status(500).json({success: false, error: 'Server error'})
         }
     }
+
+    // Lấy danh mục theo ID trước khi cập nhật
+    getCategories = async(req, res) => {
+        try {
+            const {id} = req.params
+            const category = await Category.findById(id);
+            return res.status(200).json({success: true, category})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server error'})
+        }
+    }
+
+    // Cập nhật danh mục
+    updateCategory = async(req, res) => {
+        upload(req, res, async(err) =>{
+            if (err) {
+                return res.status(500).json({success: false, message: 'Tải hình ảnh không thành công', error: err.message})
+            }
+            try {
+                const {id} = req.params
+                const {categoryName, categoryDescription} = req.body;
+                if (!categoryName || !categoryDescription) {
+                    return res.status(400).json({ success: false, error: 'Tất cả trường không được bỏ trống' })
+                }
+                
+                const updateData = {categoryName, categoryDescription}
+                if (req.file && req.file.filename) {
+                    updateData.categoryImage = req.file.filename;
+                }
+
+                const updateCategory = await Category.findByIdAndUpdate(id, updateData, {new: true})
+                if (!updateCategory) {
+                    return res.status(404).json({success: false, error: 'Danh mục không tìm thấy'})
+                }
+                
+                return res.status(200).json({success: true, message: 'Cập nhật danh mục thành công', category: updateCategory})
+            } catch (error) {
+                return res.status(500).json({success: false, error: 'Server error'})
+            }
+        })
+    }
 }
 
 module.exports = new CategoryController();

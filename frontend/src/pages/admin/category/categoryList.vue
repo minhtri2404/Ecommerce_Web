@@ -120,11 +120,11 @@
 
 <script setup>
 import {ref, computed, onMounted} from 'vue'
-// import {useRouter} from 'vue-router'
+import {useRouter} from 'vue-router'
 import axios from 'axios'
 import Alert from '@/components/Alert/ComAlert.vue';
 
-// const router = useRouter()
+const router = useRouter()
 const categories = ref([])
 const loading = ref(false)
 const search = ref('')
@@ -170,6 +170,10 @@ const fetchCategories = async() =>{
     } finally{
         loading.value = false
     }
+}
+// Di chuyển đến trang edit category
+const editCategory = (id) => {
+  router.push(`/admin-dashboard/category/${id}`)
 }
 
 // Tìm kiếm danh mục theo tên
