@@ -35,6 +35,16 @@
           ></textarea>
         </div>
 
+         <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Ảnh danh mục</label>
+          <input
+            type="file"
+            @change="handleFileUpload"
+            accept="image/*"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+        </div>
+
         <button
           type="submit"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition"
@@ -59,6 +69,14 @@ const Category = ref({
     categoryDescription: ''
 })
 
+const imageFile = ref(null)
+const handleFileUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    imageFile.value = file
+  }
+}
+
 // ALERT state
 const showAlert = ref(false);
 const alertType = ref('success'); // success | error
@@ -74,8 +92,12 @@ const showToast = (type, title, message) => {
 
 //Nhấn vào nút Thêm Danh Mục
 const handleSubmit = async () => {
+    const formData = new FormData()
+    formData.append('categoryName', Category.value.categoryName)
+    formData.append('categoryDescription', Category.value.categoryDescription)
+    formData.append('image', imageFile.value) 
     try {
-        const res = await axios.post('http://localhost:4000/api/categories/add', Category.value, {
+        const res = await axios.post('http://localhost:4000/api/categories/add', formData, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }

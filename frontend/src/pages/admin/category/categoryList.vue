@@ -31,6 +31,7 @@
         <thead class="bg-gray-100">
           <tr>
             <th class="px-6 py-3 text-sm font-medium text-gray-600">STT</th>
+            <th class="px-6 py-3 text-sm font-medium text-gray-600">Hình ảnh</th>
             <th class="px-6 py-3 text-sm font-medium text-gray-600">Tên danh mục</th>
             <th class="px-6 py-3 text-sm font-medium text-gray-600">Mô tả</th>
             <th class="px-6 py-3 text-sm font-medium text-gray-600 text-center">Hành động</th>
@@ -43,6 +44,14 @@
             class="border-b last:border-b-0 hover:bg-gray-50"
           >
             <td class="px-6 py-4">{{ item.sno }}</td>
+            <td class="px-6 py-4">
+              <img
+                v-if="item.categoryImage"
+                :src="`http://localhost:4000/uploads/${item.categoryImage}`"
+                alt="Hình ảnh danh mục"
+                class="w-16 h-16 object-cover rounded"
+              />
+            </td>
             <td class="px-6 py-4">{{ item.categoryName }}</td>
             <td class="px-6 py-4">{{ item.categoryDescription }}</td>
             <td class="px-6 py-4 text-center">
@@ -150,7 +159,8 @@ const fetchCategories = async() =>{
                 id: category._id,
                 sno: index + 1,
                 categoryName: category.categoryName,
-                categoryDescription: category.categoryDescription
+                categoryDescription: category.categoryDescription,
+                categoryImage: category.categoryImage
             }))
         }
     } catch (error) {
