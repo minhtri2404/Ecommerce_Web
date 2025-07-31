@@ -1,5 +1,7 @@
 const Category = require("../models/categoryModel")
 const upload = require('../middleware/uploadMiddleware')
+const fs = require('fs') 
+const path = require('path')
 
 class CategoryController {
     // Thêm danh mục
@@ -81,6 +83,34 @@ class CategoryController {
                 return res.status(500).json({success: false, error: 'Server error'})
             }
         })
+    }
+
+    //Xóa danh mục
+    deleteCategory = async(req, res) => {
+        try {
+            const {id} = req.params
+            const category = await Category.findByIdAndDelete(id);
+
+            if (!category) {
+                return res.status(404).json({success: false, error: 'Danh mục không tìm thấy'})
+            }
+
+            //Xóa hình ảnh nếu có
+            if(category.categoryImage){
+                const imagePath = path.join(__dirname, '..', '..', 'public', 'uploads', category.categoryImage);
+
+                if(fs.existsSync(imagePath)){
+                    fs.unlinkSync(imagePath); // Xóa file ảnh
+                    console.log("Ảnh đã được xóa: ", category.categoryImage);
+                } else{
+                    console.log("Ảnh không tồn tại: ", imagePath);
+                }
+            }
+
+            return res.status(200).json({success: true, message: 'Xóa danh mục thành công'})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server error'})
+        }
     }
 }
 

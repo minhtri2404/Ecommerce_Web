@@ -176,6 +176,30 @@ const editCategory = (id) => {
   router.push(`/admin-dashboard/category/${id}`)
 }
 
+// Gọi API để xóa danh mục
+const deleteCategory = async(id) => {
+  const confirmDelete = confirm('Bạn có muốn xóa danh mục này không')
+    if(confirmDelete){
+      try {
+        const res = await axios.delete(`http://localhost:4000/api/categories/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (res.data.success) {
+          showToast('success','Thành công', 'Xóa danh mục thành công!', '');
+          await fetchCategories(); // Cập nhật lại danh sách sau khi xóa
+        } else {
+          showToast('error', 'Thất bại', res.data.error || 'Xóa thất bại.')
+        }
+    } catch (error) {
+        showToast('error','Thất bại', 'Đã xảy ra lỗi khi xóa danh mục.', error.response ? error.response.data.error : error.message);
+    }
+  }
+}
+
+
 // Tìm kiếm danh mục theo tên
 const filteredCategories = computed(() =>
   categories.value.filter(category =>
