@@ -13,6 +13,7 @@ import AdminDashboard from '../pages/admin/ComDashboard.vue' // ✅ Chỉ là pa
 import CategoryList from '../pages/admin/category/categoryList.vue'
 import AddCategory from '../pages/admin/category/categoryAdd.vue'
 import EditCategory from '../pages/admin/category/categoryEdit.vue'
+import ProductList from '../pages/admin/product/productList.vue'
 const routes = [
   {
     path: '/',
@@ -34,9 +35,9 @@ const routes = [
       { path: '', name: 'AdminDashboard', component: AdminDashboard }, // ✅ chỉ là page
       { path: 'category', name: CategoryList, component: CategoryList},
       { path: 'add-category', name: AddCategory, component: AddCategory},
-      { path: 'category/:id', name: EditCategory, component: EditCategory} 
-
-
+      { path: 'category/:id', name: EditCategory, component: EditCategory},
+      { path: 'product', name: ProductList, component: ProductList}, 
+ 
       // Các trang admin khác
     ]
   }

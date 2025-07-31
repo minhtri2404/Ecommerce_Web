@@ -34,10 +34,14 @@ const startServer = async () => {
     const authRouter = require('./src/routes/authRoute');
     app.use('/api/auth', authRouter);
 
-     //Localhost:4000/api/category
+    //Localhost:4000/api/category
     const categoryRouter = require('./src/routes/categoryRoute');
     app.use('/api/categories', categoryRouter);
 
+    //Localhost:4000/api/product
+    const productRouter = require('./src/routes/productRoute');
+    app.use('/api/products', productRouter);
+    
     app.get('/', (req, res) => {
       res.json({ message: 'Welcome' });
     });
