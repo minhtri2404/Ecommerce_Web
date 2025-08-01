@@ -14,6 +14,7 @@ import CategoryList from '../pages/admin/category/categoryList.vue'
 import AddCategory from '../pages/admin/category/categoryAdd.vue'
 import EditCategory from '../pages/admin/category/categoryEdit.vue'
 import ProductList from '../pages/admin/product/productList.vue'
+import AddProduct from '../pages/admin/product/productAdd.vue'
 const routes = [
   {
     path: '/',
@@ -37,7 +38,8 @@ const routes = [
       { path: 'add-category', name: AddCategory, component: AddCategory},
       { path: 'category/:id', name: EditCategory, component: EditCategory},
       { path: 'product', name: ProductList, component: ProductList}, 
- 
+      { path: 'add-product', name: AddProduct, component: AddProduct}, 
+
       // Các trang admin khác
     ]
   }

@@ -202,7 +202,7 @@ const fetchProducts = async() => {
 
 // Di chuyển đến trang edit product
 const editProduct = (id) => {
-  router.push(`/admin-dashboard/category/${id}`)
+  router.push(`/admin-dashboard/product/${id}`)
 }
 
 
