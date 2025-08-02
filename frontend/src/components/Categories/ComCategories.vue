@@ -99,12 +99,7 @@ const getCategoryImageUrl = (filename) => {
 const fetchCategories = async() =>{
     loading.value = true
     try {
-        const res = await axios.get('http://localhost:4000/api/categories', {
-            headers:{
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-
+        const res = await axios.get('http://localhost:4000/api/categories')
         if (res && res.data && Array.isArray(res.data.categories)) {
             categories.value = res.data.categories.map((category, index) => ({
                 id: category._id,
