@@ -83,11 +83,11 @@
               </td>
               <td class="px-4 py-3 text-center space-x-2">
                 <button
-                  @click="editProduct(item._id)"
+                  @click="editProduct(item.id)"
                   class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                 >Sửa</button>
                 <button
-                  @click="deleteProduct(item._id)"
+                  @click="deleteProduct(item.id)"
                   class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                 >Xoá</button>
               </td>

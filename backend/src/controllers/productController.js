@@ -57,5 +57,60 @@ class ProductController {
             return res.status(500).json({success: false, error: 'Server error'})
         }
     }
+
+    // Lấy sản phẩm theo ID
+    getProduct = async(req, res) =>{
+        try {
+            const {id} = req.params
+            const product = await Product.findById(id)
+            return res.status(200).json({success: true, product})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server error'})
+        }
+    }
+
+    // Cập nhật sản phẩm
+    updateProduct = async(req, res) => {
+        upload(req, res, async(err) => {
+            if (err) {
+                return res.status(500).json({success: false, message: 'Tải hình ảnh không thành công', error: err.message})
+            }
+            try {
+                const {id} = req.params;
+                const {name, description, price, quantity, category, sizes, colors, isFeatured} = req.body;
+
+                if(!name || !price || !category) {
+                    return res.status(400).json({ success: false, error: 'Tên, giá và danh mục là bắt buộc' })
+                }
+
+                // Cập nhật sản phẩm
+                const updateData = {
+                    name,
+                    description,
+                    price: parseFloat(price),
+                    quantity: parseInt(quantity),
+                    category,
+                    sizes: sizes ? sizes.split(',') : [],
+                    colors: colors ? colors.split(',') : [],
+                    isFeatured: isFeatured === 'true'
+                };
+
+                // Cập nhật ảnh sản phẩm nếu có
+                if (req.files && req.files.length > 0) {
+                    const imagePath = req.files.map(file => file.filename);
+                    updateData.images = imagePath;
+                }
+
+                const updateProduct = await Product.findByIdAndUpdate(id, updateData, {new: true})
+                if (!updateProduct) {
+                    return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
+                }
+
+                return res.status(200).json({ success: true, message: 'Sản phẩm đã được cập nhật thành công', product: updateProduct });
+            } catch (error) {
+                return res.status(500).json({success: false, error: 'Server error'})
+            }
+        })
+    }
 }
 module.exports = new ProductController();
