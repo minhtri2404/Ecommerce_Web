@@ -143,5 +143,31 @@ class ProductController {
             return res.status(500).json({ success: false, error: 'Server error' });
         }
     }
+
+    // Cập nhật nút nổi bật
+    toggleFeatured = async(req, res) =>{
+        try {
+            const {id} = req.params
+
+            const products = await Product.findById(id)
+            // Kiểm tra xem sản phẩm đó có tồn tại hay không
+            if (!products) {
+                return res.status(400).json({success: false, error: 'Sản phẩm không tồn tại! '})
+            }
+            
+            const updateProducts = await Product.findByIdAndUpdate(
+                id, 
+                { isFeatured: !products.isFeatured },
+                { new: true}
+            )
+            return res.status(200).json({
+                success: true, 
+                message: `Đã ${updateProducts.isFeatured ? 'bật' : 'tắt'} sản phẩm nổi bật.`,
+                products: updateProducts
+            })
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
+    }
 }
 module.exports = new ProductController();

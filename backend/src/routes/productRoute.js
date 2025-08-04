@@ -8,5 +8,5 @@ router.get("/", authMiddleware, productController.getAllProduct)
 router.get('/:id', authMiddleware, productController.getProduct)
 router.put('/:id', authMiddleware, productController.updateProduct)
 router.delete('/:id', authMiddleware, productController.deleteProduct)
-
+router.put('/:id/featured', authMiddleware, productController.toggleFeatured)
 module.exports = router;

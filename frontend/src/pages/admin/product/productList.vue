@@ -68,9 +68,9 @@
                   <input
                     type="checkbox"
                     class="sr-only peer"
-                    v-model="item.isFeatured"
+                    :checked="item.isFeatured"
+                    @change="toggleFeatured(item.id)"
                   />
-                  
                   <!-- Khung toggle -->
                   <div class="w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"></div>
                   
@@ -216,7 +216,7 @@ const deleteProduct = async(id) => {
         }
       })
       if (res.data.success) {
-        showToast('success','Thành công', 'Xóa sản phẩm thành công!', '');
+        showToast('success','Thành công', res.data.message);
         await fetchProducts(); // Cập nhật lại danh sách sau khi xóa
       }else {
         showToast('error', 'Thất bại', res.data.error || 'Xóa thất bại.')
@@ -224,6 +224,25 @@ const deleteProduct = async(id) => {
     } catch (error) {
       showToast('error','Thất bại', 'Đã xảy ra lỗi khi xóa danh mục.', error.response ? error.response.data.error : error.message);
     }
+  }
+}
+
+// Gọi APi để bật tắt sản phẩm nổi bật
+const toggleFeatured = async(id) => {
+  try {
+    const res = await axios.put(`http://localhost:4000/api/products/${id}/featured`, {}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    if (res.data.success) {
+      products.value.isFeatured = res.data.products.isFeatured;
+      showToast('success', 'Cập nhật thành công', res.data.message)
+    } else{
+      showToast('error', 'Lỗi', res.data.error || 'Cập nhật thất bại');
+    }
+  } catch (error) {
+    showToast('error','Thất bại', 'Đã xảy ra lỗi cập nhật nổi bật.', error.response ? error.response.data.error : error.message);
   }
 }
 
