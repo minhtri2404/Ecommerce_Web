@@ -205,6 +205,27 @@ const editProduct = (id) => {
   router.push(`/admin-dashboard/product/${id}`)
 }
 
+//Xóa sản phẩm
+const deleteProduct = async(id) => {
+  const confirmDelete = confirm('Bạn có muốn xóa sản phẩm này không! ')
+  if (confirmDelete) {
+      try {
+      const res = await axios.delete(`http://localhost:4000/api/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      if (res.data.success) {
+        showToast('success','Thành công', 'Xóa sản phẩm thành công!', '');
+        await fetchProducts(); // Cập nhật lại danh sách sau khi xóa
+      }else {
+        showToast('error', 'Thất bại', res.data.error || 'Xóa thất bại.')
+      }
+    } catch (error) {
+      showToast('error','Thất bại', 'Đã xảy ra lỗi khi xóa danh mục.', error.response ? error.response.data.error : error.message);
+    }
+  }
+}
 
 // Tìm kiếm danh mục theo tên
 const filteredProducts = computed(() =>

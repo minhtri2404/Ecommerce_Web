@@ -1,5 +1,7 @@
 const Product = require('../models/productModel')
 const upload = require('../middleware/uploadProduct')
+const fs = require('fs') 
+const path = require('path')
 
 class ProductController {
     // Thêm sản phẩm
@@ -111,6 +113,35 @@ class ProductController {
                 return res.status(500).json({success: false, error: 'Server error'})
             }
         })
+    }
+
+    //Xóa sản phẩm
+    deleteProduct = async(req, res) => {
+        try {
+            const { id } = req.params;
+
+            const productDelete = await Product.findByIdAndDelete(id);
+            if (!productDelete) {
+                return res.status(400).json({ success: false, error: 'Sản phẩm không tồn tại' });
+            }
+
+            // Xóa hình ảnh
+            if (productDelete.images && Array.isArray(productDelete.images)) {
+                productDelete.images.forEach((filename) => {
+                    const imagePath = path.join(__dirname, '..', '..', 'public', 'uploads', 'product', filename);
+                    if (fs.existsSync(imagePath)) {
+                        fs.unlinkSync(imagePath);
+                        console.log("Ảnh đã được xóa: ", filename);
+                    } else {
+                        console.log("Ảnh không tồn tại: ", imagePath);
+                    }
+                });
+            }
+
+            return res.status(200).json({ success: true, message: 'Xóa sản phẩm thành công' });
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
     }
 }
 module.exports = new ProductController();
