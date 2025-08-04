@@ -1,23 +1,37 @@
 <template>
   <section class="py-12 px-4">
-    <h1 class="text-3xl font-semibold text-center mx-auto">Sản phẩm phổ biến</h1>
+    <!-- Alert Toast -->
+    <Alert
+      v-model="showAlert"
+      :type="alertType"
+      :title="alertTitle"
+      :message="alertMessage"
+      :duration="3000"
+    />
+    <h1 class="text-3xl font-semibold text-center mx-auto">Sản phẩm nổi bật</h1>
     <p class="text-sm text-slate-500 text-center mt-2 max-w-lg mx-auto">
       Những sản phẩm được yêu thích và bán chạy nhất trong cửa hàng.
     </p>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12 max-w-6xl mx-auto">
       <div
-        v-for="(product, index) in products"
-        :key="index"
+        v-for="product in products"
+        :key="product._id"
         class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
       >
-        <img :src="product.image" :alt="product.title" class="w-full h-56 object-cover" />
+        <img
+          :src="`http://localhost:4000/uploads/product/${product.images[0]}`"
+          :alt="product.name"
+          class="w-full h-56 object-cover"
+        />
         <div class="p-4">
-          <h2 class="text-lg font-medium mb-1">{{ product.title }}</h2>
-          <p class="text-sm text-gray-500 mb-2">{{ product.description }}</p>
-          <p class="text-base font-semibold text-indigo-600">{{ product.price }}</p>
+          <h2 class="text-lg font-medium mb-1">{{ product.name }}</h2>
+          <p class="text-sm text-gray-500 mb-2 line-clamp-2">{{ product.description }}</p>
+          <p class="text-base font-semibold text-indigo-600">
+            {{ product.price.toLocaleString() }}₫
+          </p>
           <a
-            :href="product.url"
+            :href="`/product/${product._id}`"
             class="inline-block mt-3 text-sm text-indigo-500 hover:underline"
           >
             Xem chi tiết
@@ -28,35 +42,40 @@
   </section>
 </template>
 
+
 <script setup>
-const products = [
-  {
-    title: 'Áo thun oversize',
-    description: 'Chất liệu cotton 100%, mềm mịn thoáng mát.',
-    price: '250.000₫',
-    image: new URL('@/assets/img/product/product-9.jpg', import.meta.url).href,
-    url: '/product/1',
-  },
-  {
-    title: 'Áo khoác nam',
-    description: 'Thiết kế đơn giản, form slim-fit.',
-    price: '450.000₫',
-    image: new URL('@/assets/img/product/product-2.jpg', import.meta.url).href,
-    url: '/product/2',
-  },
-  {
-    title: 'Túi xách vintage',
-    description: 'Phù hợp đi chơi, đi biển, dạo phố.',
-    price: '320.000₫',
-    image: new URL('@/assets/img/product/product-13.jpg', import.meta.url).href,
-    url: '/product/3',
-  },
-  {
-    title: 'Kính mắt hàng hiệu',
-    description: 'Chống nắng, phù hợp thời tiết thu đông.',
-    price: '520.000₫',
-    image: new URL('@/assets/img/product/product-14.jpg', import.meta.url).href,
-    url: '/product/4',
-  },
-];
+import { ref, onMounted } from 'vue'
+import axios from 'axios';
+
+const products = ref([])
+
+// ALERT state
+const showAlert = ref(false);
+const alertType = ref('success'); // success | error
+const alertTitle = ref('');
+const alertMessage = ref('');
+
+const showToast = (type, title, message) => {
+  alertType.value = type;
+  alertTitle.value = title;
+  alertMessage.value = message;
+  showAlert.value = true;
+};
+
+// Gọi API để hiển thị sản phẩm nổi bật
+const fetchFeaturedProducts = async() => {
+  try {
+    const res = await axios.get('http://localhost:4000/api/products/featured')
+    if (res.data.success) {
+      products.value = res.data.products
+    }
+  } catch (error) {
+    if (error.response && !error.response.data.success) {
+      showToast('error', 'Đã xảy ra lỗi khi tải dữ liệu.', error.response.data.error);
+    }
+  }
+}
+
+onMounted(fetchFeaturedProducts)
 </script>
+

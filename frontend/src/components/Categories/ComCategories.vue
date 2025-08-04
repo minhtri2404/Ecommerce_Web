@@ -21,7 +21,7 @@
         class="relative group rounded-lg overflow-hidden cursor-pointer"
       >
         <img
-          :src="getCategoryImageUrl(category.categoryImage)"
+          :src="`http://localhost:4000/uploads/${category.categoryImage}`"
           :alt="category.categoryName"
           class="size-56 object-cover object-top"
         />
@@ -88,12 +88,6 @@ const showToast = (type, title, message) => {
   alertMessage.value = message;
   showAlert.value = true;
 };
-
-// ✅ Hàm xử lý ảnh
-const getCategoryImageUrl = (filename) => {
-  if (!filename);
-  return `http://localhost:4000/uploads/${filename}`;
-}
 
 //Gọi API để lấy tất cả danh mục
 const fetchCategories = async() =>{

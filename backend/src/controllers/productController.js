@@ -169,5 +169,15 @@ class ProductController {
             return res.status(500).json({ success: false, error: 'Server error' });
         }
     }
+
+    // Hiển thị sản phẩm nổi bật bên customer
+    getFeaturedProduct = async(req, res) => {
+        try {
+            const featureProduct = await Product.find({isFeatured: true})
+            return res.status(200).json({success: true, products: featureProduct})
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
+    }
 }
 module.exports = new ProductController();
