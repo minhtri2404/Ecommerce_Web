@@ -4,7 +4,7 @@ const productController = require("../controllers/productController")
 const authMiddleware = require("../middleware/authMiddleware")
 
 router.post("/add", authMiddleware, productController.addProduct)
-router.get("/", authMiddleware, productController.getAllProduct)
+router.get("/", productController.getAllProduct)
 router.get('/featured', productController.getFeaturedProduct)
 router.get('/:id', authMiddleware, productController.getProduct)
 router.put('/:id', authMiddleware, productController.updateProduct)

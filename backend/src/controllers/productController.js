@@ -2,6 +2,8 @@ const Product = require('../models/productModel')
 const upload = require('../middleware/uploadProduct')
 const fs = require('fs') 
 const path = require('path')
+const mongoose = require('mongoose');
+
 
 class ProductController {
     // Thêm sản phẩm
@@ -49,16 +51,72 @@ class ProductController {
         })
     }
 
-    // Lấy tất cả sản phẩm
-    getAllProduct = async(req, res) => {
+    // Lấy tất cả sản phẩm (có lọc và sắp xếp)
+    getAllProduct = async (req, res) => {
         try {
-            const products = await Product.find()
-                .populate('category', 'categoryName')
-            return res.status(200).json({success: true, products})
+            const { search, category, minPrice, maxPrice, sizes, colors, sort } = req.query;
+
+            let filter = {};
+
+            // Tìm kiếm theo tên sản phẩm
+            if (search) {
+                filter.name = { $regex: search, $options: 'i' };
+            }
+
+            // Lọc theo danh mục (convert sang ObjectId)
+            if (category) {
+                const id = category
+                .split(',')
+                .filter(id => mongoose.Types.ObjectId.isValid(id)) // tránh lỗi
+                .map(id => new mongoose.Types.ObjectId(id));
+
+                if (id.length > 0) {
+                    filter.category = { $in: id };
+                }
+            }
+            
+            // Lọc theo giá
+            if (minPrice && maxPrice) {
+                if (maxPrice === 'Infinity') {
+                    filter.price = { $gte: Number(minPrice) };
+                } else {
+                    filter.price = { $gte: Number(minPrice), $lte: Number(maxPrice) };
+                }
+            }
+
+            // Lọc theo size
+            if (sizes) {
+                const sizeArray = sizes.split(',').map(s => s.trim().toUpperCase());
+                filter.sizes = { $in: sizeArray };
+            }
+
+            // Lọc theo màu
+            if (colors) {
+                const colorArr = colors.split(',');
+                filter.colors = { $in: colorArr };
+            }
+
+            // Query MongoDB
+            let query = Product.find(filter).populate('category', 'categoryName');
+
+            // Sắp xếp
+            if (sort === 'priceAsc') query = query.sort({ price: 1 });
+            if (sort === 'priceDesc') query = query.sort({ price: -1 });
+            if (sort === 'newest') query = query.sort({ createdAt: -1 });
+
+            const products = await query;
+
+            return res.status(200).json({
+                success: true,
+                products,
+                total: products.length
+            });
         } catch (error) {
-            return res.status(500).json({success: false, error: 'Server error'})
+            console.error(error);
+            return res.status(500).json({ success: false, error: 'Server error' });
         }
-    }
+    };
+
 
     // Lấy sản phẩm theo ID
     getProduct = async(req, res) =>{

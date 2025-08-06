@@ -171,11 +171,7 @@ const showToast = (type, title, message) => {
 const fetchProducts = async() => {
     loading.value = true;
     try {
-        const res = await axios.get('http://localhost:4000/api/products', {
-             headers:{
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
+        const res = await axios.get('http://localhost:4000/api/products')
         if (res && res.data && Array.isArray(res.data.products)) {
             products.value = res.data.products.map((product, index) => ({
                 id: product._id,
