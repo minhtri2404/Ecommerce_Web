@@ -54,10 +54,6 @@
         <h1 class="text-3xl font-semibold">{{ product.name }}</h1>
         <div class="flex items-center gap-4">
           <p class="text-2xl font-bold text-red-500">{{ formatCurrency(product.price) }}</p>
-          <p v-if="product.oldPrice" class="text-lg text-gray-500 line-through">
-            {{ formatCurrency(product.oldPrice) }}
-          </p>
-          <span v-if="product.discount" class="text-sm text-white bg-red-500 px-2 py-0.5 rounded">-{{ product.discount }}%</span>
         </div>
 
         <!-- Status + Stock -->
@@ -67,7 +63,7 @@
         </div>
 
         <!-- Description -->
-        <p class="text-gray-700">{{ product.shortDescription }}</p>
+        <p class="text-gray-700">{{ product.description }}</p>
 
         <!-- Size -->
         <div v-if="product.sizes?.length">
