@@ -123,6 +123,7 @@ class ProductController {
         try {
             const {id} = req.params
             const product = await Product.findById(id)
+                .populate('category', 'categoryName');
             return res.status(200).json({success: true, product})
         } catch (error) {
             return res.status(500).json({success: false, error: 'Server error'})
