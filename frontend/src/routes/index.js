@@ -10,6 +10,7 @@ import Login from '@/components/Login/ComLogin.vue'
 import Register from '@/components/Register/ComRegister.vue'
 import Shop from '../pages/ComProduct.vue'
 import ProductDetail from '../pages/ComProductDetail.vue'
+// import Cart from '../pages/ComCart.vue'
 import AdminDashboard from '../pages/admin/ComDashboard.vue' // ✅ Chỉ là page
 import CategoryList from '../pages/admin/category/categoryList.vue'
 import AddCategory from '../pages/admin/category/categoryAdd.vue'
@@ -27,7 +28,8 @@ const routes = [
       { path: 'login', name: 'Login', component: Login, meta: { hideNavBar: true } },
       { path: 'register', name: 'Register', component: Register, meta: { hideNavBar: true } },
       { path: 'shop', name: 'Shop', component: Shop },
-      { path: '/product/:id', name: 'ProductDetail', component: ProductDetail}
+      { path: '/product/:id', name: 'ProductDetail', component: ProductDetail},
+      // { path: 'cart', name: 'Cart', component: Cart}
       // Thêm các route khác của khách hàng tại đây
     ]
   },

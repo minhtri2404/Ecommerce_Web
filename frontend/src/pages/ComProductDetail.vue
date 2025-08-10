@@ -111,7 +111,7 @@
         <div class="flex gap-4 pt-4">
           <button
             @click="addToCart"
-            class="flex-1 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            class="flex-1 py-3 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
           >
             Thêm Vào Giỏ
           </button>
@@ -159,6 +159,7 @@ const getImageUrl = (filename) => {
   return `http://localhost:4000/uploads/product/${filename}`
 }
 
+// Gọi API để lấy thông tin chi tiết của sản phẩm
 const fetchProduct = async () => {
   try {
     const res = await axios.get(`http://localhost:4000/api/products/${id}`)
@@ -180,26 +181,52 @@ const decreaseQuantity = () => {
   if (quantity.value > 1) quantity.value--
 }
 
+// Thêm sản phẩm vào giỏ hàng
 const addToCart = () => {
+  // Kiểm tra đăng nhập
+  const token = localStorage.getItem('token')
+  if (!token) {
+    showToast('error', 'Yêu cầu đăng nhập', 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng')
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000)
+    return
+  } 
+
+  // Kiểm tra size + màu
   if (!selectedSize.value || !selectedColor.value) {
     showToast('error', 'Lỗi', 'Vui lòng chọn phiên bản và màu sắc')
     return
   }
-    showToast('success', 'Thành công', 'Thêm thành công vào giỏ hàng');
-    setTimeout(() => {
-        router.push('/cart')
-    }, 2000)
+
+  // Kiểm tra số lượng// Nếu đã đăng nhập thì thực hiện thêm vào giỏ
+  showToast('success', 'Thành công', 'Thêm thành công vào giỏ hàng');
+  setTimeout(() => {
+    router.push('/cart')
+  }, 2000)
 }
 
+// Mua ngay
 const buyNow = () => {
+  // Kiểm tra đăng nhập
+  const token = localStorage.getItem('token')
+  if (!token) {
+    showToast('error', 'Yêu cầu đăng nhập', 'Vui lòng đăng nhập mới có thể thanh toán')
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000)
+    return
+  } 
+  
   if (!selectedSize.value || !selectedColor.value) {
     showToast('error', 'Lỗi', 'Vui lòng chọn phiên bản và màu sắc')
     return
   }
+
   showToast('success', 'Thành công', 'Chuyển tới trang thanh toán')
   setTimeout(() => {
-        router.push('/checkout')
-    }, 2000)
+    router.push('/checkout')
+  }, 2000)
 }
 
 const formatCurrency = (value) => {
