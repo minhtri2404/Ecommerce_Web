@@ -182,7 +182,7 @@ const decreaseQuantity = () => {
 }
 
 // Thêm sản phẩm vào giỏ hàng
-const addToCart = () => {
+const addToCart = async () => {
   // Kiểm tra đăng nhập
   const token = localStorage.getItem('token')
   if (!token) {
@@ -199,11 +199,32 @@ const addToCart = () => {
     return
   }
 
-  // Kiểm tra số lượng// Nếu đã đăng nhập thì thực hiện thêm vào giỏ
-  showToast('success', 'Thành công', 'Thêm thành công vào giỏ hàng');
-  setTimeout(() => {
-    router.push('/cart')
-  }, 2000)
+  try {
+    const res = await axios.post('http://localhost:4000/api/cart/add',
+      {
+        productId: id,
+        size: selectedSize.value,
+        color: selectedColor.value,
+        quantity: quantity.value
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    )
+    
+    if (res.data.success) {
+      showToast('success', 'Thành công', res.data.message)
+      setTimeout(() => {
+        router.push('/cart')
+      }, 2000)
+    } else {
+      showToast('error', 'Lỗi', res.data.message || 'Không thể thêm vào giỏ hàng')
+    }
+  } catch (error) {
+    showToast('error', 'Lỗi', error.response?.data?.error || 'Không thể thêm vào giỏ hàng')
+  }
 }
 
 // Mua ngay
