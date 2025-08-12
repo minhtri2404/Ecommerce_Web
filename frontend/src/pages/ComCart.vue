@@ -157,21 +157,62 @@ const fetchCart = async () => {
   }
 }
 
+// Tính tổng tiền trong giỏ hàng (chưa tính phí ship, giảm giá)
 const subtotal = computed(() =>
   cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
 )
+// Tổng tiền cuối cùng (hiện tại = subtotal, sau này có thể cộng phí ship/thuế)
 const total = computed(() => subtotal.value)
 
-const increaseQty = (index) => {
-  cart.value[index].quantity++
-  // TODO: gọi API cập nhật số lượng
-}
-const decreaseQty = (index) => {
-  if (cart.value[index].quantity > 1) {
-    cart.value[index].quantity--
-    // TODO: gọi API cập nhật số lượng
+// Gọi API để cập nhật số lượng sản phẩm trong giỏ hàng
+const updateQty = async (index, quantity) => {
+  const item = cart.value[index]
+  try {
+    const res = await axios.put(
+      'http://localhost:4000/api/cart/update',
+      {
+        productId: item.product._id || item.product,
+        quantity,
+        size: item.size,
+        color: item.color
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    )
+    if (res.data.success) {
+      cart.value = res.data.cart.items.map(item => ({
+        ...item,
+        name: item.product?.name || '',
+        image: item.image || (item.product?.images ? item.product.images[0] : ''),
+        price: item.price || (item.product?.price || 0)
+      }))
+    }
+  } catch (error) {
+    showToast('error', 'Lỗi', error.response?.data?.error || 'Không thể cập nhật giỏ hàng.')
   }
 }
+
+// Hàm tăng số lượng sản phẩm
+const increaseQty = (index) => {
+   const newQty = cart.value[index].quantity + 1
+  updateQty(index, newQty)
+}
+
+// Hàm giảm số lượng sản phẩm
+const decreaseQty = (index) => {
+  const newQty = cart.value[index].quantity - 1
+  if (newQty >= 1) {
+    updateQty(index, newQty)
+  } else {
+    // Nếu muốn xoá khi còn 1 rồi nhấn trừ
+    removeItem(index)
+  }
+}
+
+
 const removeItem = (index) => {
   cart.value.splice(index, 1)
   // TODO: gọi API xóa sản phẩm khỏi giỏ hàng

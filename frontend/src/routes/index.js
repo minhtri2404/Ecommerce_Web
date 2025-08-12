@@ -25,8 +25,8 @@ const routes = [
     component: CustomerLayout,
     children: [
       { path: '', name: 'Home', component: Home },
-      { path: 'login', name: 'Login', component: Login, meta: { hideNavBar: true } },
-      { path: 'register', name: 'Register', component: Register, meta: { hideNavBar: true } },
+      { path: 'login', name: 'Login', component: Login },
+      { path: 'register', name: 'Register', component: Register },
       { path: 'shop', name: 'Shop', component: Shop },
       { path: '/product/:id', name: 'ProductDetail', component: ProductDetail},
       { path: 'cart', name: 'Cart', component: Cart}

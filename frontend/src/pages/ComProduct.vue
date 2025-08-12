@@ -17,7 +17,7 @@
           v-model="searchQuery"
           placeholder="Search..."
           class="w-full border rounded px-3 py-2 text-sm"
-          @keyup.enter="fetchProducts"
+          @input="fetchProducts"
         />
       </div>
 
