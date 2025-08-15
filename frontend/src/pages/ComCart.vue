@@ -85,17 +85,28 @@
           <span>Tổng cộng</span>
           <span>{{ formatPrice(total) }}</span>
         </div>
-        <button
-          class="w-full bg-emerald-500 text-white py-3 rounded hover:bg-emerald-600 cursor-pointer"
-        >
-          → Tiến Hành Thanh Toán
-        </button>
-        <button
-          class="w-full text-red-500 mt-3 cursor-pointer"
-          @click="goShopping"
-        >
-          Tiếp Tục Mua Sắm
-        </button>
+        
+        <router-link to="/checkout" class="w-full block">
+          <button
+            class="w-full flex items-center justify-center gap-2 bg-emerald-500 text-white py-3 rounded hover:bg-emerald-600 cursor-pointer"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+            Tiến Hành Thanh Toán
+          </button>
+        </router-link>
+
+        <router-link to="/shop" class="w-full block mt-3">
+          <button
+            class="w-full flex items-center justify-center gap-2 bg-gray-500 text-white py-3 rounded hover:bg-gray-600 cursor-pointer"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+             Tiếp Tục Mua Sắm
+          </button>
+        </router-link>
       </div>
     </div>
   </div>
@@ -266,10 +277,6 @@ const clearCart = async() => {
   } catch (error) {
     showToast('error', 'Lỗi', error.response?.data?.error || 'Không thể xóa sản phẩm khỏi giỏ hàng.')
   }
-}
-
-const goShopping = () => {
-  router.push('/shop')
 }
 
 onMounted(() => {
