@@ -249,10 +249,23 @@ const removeItem = async (index) => {
   }
 }
 
-
-const clearCart = () => {
-  cart.value = []
-  // TODO: gọi API xóa hết giỏ hàng
+// Gọi APi để xóa toàn bộ SP trong giỏ hàng
+const clearCart = async() => {
+  try {
+    const res = await axios.delete('http://localhost:4000/api/cart/clear', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    if (res.data.success) {
+      showToast('success', 'Thành công', res.data.message)
+      cart.value = [] // Xóa giỏ hàng trong state
+    } else {
+      showToast('error', 'Lỗi', res.data.error || 'Không thể xóa giỏ hàng.')
+    }
+  } catch (error) {
+    showToast('error', 'Lỗi', error.response?.data?.error || 'Không thể xóa sản phẩm khỏi giỏ hàng.')
+  }
 }
 
 const goShopping = () => {

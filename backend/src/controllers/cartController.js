@@ -87,7 +87,6 @@ class CartController {
 
             // Tìm giỏ hàng của người dùng
             const cart = await Cart.findOne({user: userId}).populate('items.product', 'name price images');
-
             if (!cart) {
                 return res.status(404).json({success: false, error: 'Giỏ hàng không tồn tại'});
             }
@@ -179,6 +178,27 @@ class CartController {
             await cart.save();
 
             return res.status(200).json({ success: true, message: 'Xóa sản phẩm khỏi giỏ hàng thành công', cart });
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
+    }
+
+    // Xóa toàn bộ SP khỏi giỏ hàng
+    clearAllCart = async(req, res) => {
+        try {
+            const userId = req.user._id; // Lấy user(_id) từ middleware xác thực token
+
+           //Tìm giỏ hàng của người dùng theo id của user
+            const cart = await Cart.findOne({ user: userId })
+            if (!cart) {
+                return res.status(404).json({ success: false, error: 'Giỏ hàng không tồn tại' });
+            }
+
+            // Xóa toàn bộ sP khỏi giỏ hàng
+            cart.items = []
+            await cart.save();
+
+            return res.status(200).json({success: true, message: 'Xóa toàn bộ sản phẩm thành công', cart})
         } catch (error) {
             return res.status(500).json({ success: false, error: 'Server error' });
         }
