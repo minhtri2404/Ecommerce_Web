@@ -212,11 +212,43 @@ const decreaseQty = (index) => {
   }
 }
 
+// Gọi API để xóa 1 sản phẩm khỏi giỏ hàng
+const removeItem = async (index) => {
+  try {
+    const item = cart.value[index]
+    const res = await axios.delete('http://localhost:4000/api/cart/remove', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
+      data: {
+        productId: item.product._id || item.product,
+        size: item.size,
+        color: item.color
+      }
+    })
 
-const removeItem = (index) => {
-  cart.value.splice(index, 1)
-  // TODO: gọi API xóa sản phẩm khỏi giỏ hàng
+    if (res.data.success) {
+      showToast('success', 'Thành công', res.data.message)
+      // Cập nhật lại cart từ backend
+      if (res.data.cart && res.data.cart.items) {
+        cart.value = res.data.cart.items.map(item => ({
+          ...item,
+          name: item.product?.name || '',
+          image: item.image || (item.product?.images ? item.product.images[0] : ''),
+          price: item.price || (item.product?.price || 0)
+        }))
+      } else {
+        // Nếu giỏ hàng trống sau xóa, set cart rỗng
+        cart.value = []
+      }
+    } else {
+      showToast('error', 'Lỗi', res.data.error || 'Xóa sản phẩm thất bại')
+    }
+  } catch (error) {
+    showToast('error', 'Lỗi', error.response?.data?.error || 'Không thể xóa sản phẩm khỏi giỏ hàng.')
+  }
 }
+
 
 const clearCart = () => {
   cart.value = []

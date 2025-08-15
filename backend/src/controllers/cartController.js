@@ -147,6 +147,42 @@ class CartController {
             return res.status(500).json({ success: false, error: 'Server error' });
         }
     };
+
+    // Xóa 1 sản phẩm khỏi giỏ hàng
+    removeFromCart = async(req, res) => {
+        try {
+            const userId = req.user._id; 
+            const { productId, size, color } = req.body;
+
+            //Tìm giỏ hàng của người dùng theo id của user và populate cả quantity để kiểm tra tồn kho
+            const cart = await Cart.findOne({ user: userId })
+                .populate('items.product', 'name price images quantity');
+
+            if (!cart) {
+                return res.status(404).json({ success: false, error: 'Giỏ hàng không tồn tại' });
+            }
+
+            // Tìm sản phẩm trong giỏ hàng
+            const itemIndex = cart.items.findIndex(
+                item => item.product._id.toString() === productId &&
+                        (item.size ?? '') === (size ?? '') &&       // so sánh null/undefined như chuỗi rỗng
+                        (item.color ?? '') === (color ?? '')
+            );
+
+            // Kiểm tra sản phẩm có trong giỏ hàng không
+            if (itemIndex === -1) {
+                return res.status(404).json({ success: false, error: 'Sản phẩm không có trong giỏ hàng' });
+            }
+
+            // Xóa sản phẩm khỏi giỏ hàng
+            cart.items.splice(itemIndex, 1);
+            await cart.save();
+
+            return res.status(200).json({ success: true, message: 'Xóa sản phẩm khỏi giỏ hàng thành công', cart });
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
+    }
 }
 
 module.exports = new CartController();
