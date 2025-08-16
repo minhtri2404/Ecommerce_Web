@@ -61,6 +61,24 @@ class OrderController{
             return res.status(500).json({success: false, error: 'Server error'})
         }
     }
+
+    // Lấy tất cả đơn hàng của người dùng
+    getAllOrders = async(req, res) => {
+        try {
+            const orders = await Order.find()
+                .populate('user', 'name email') // lấy thông tin user
+                .populate('products.product', 'name price images')
+                .sort({ createdAt: -1 });
+            // Kiểm tra nếu không có đơn hàng nào
+            if (!orders || orders.length === 0) {
+                return res.status(404).json({ success: false, message: 'Không có đơn hàng nào' });
+            }
+
+            return res.status(200).json({ success: true, orders });
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
+    }
 }
 
 module.exports = new OrderController();
