@@ -26,7 +26,7 @@
           <!-- Thành phố + Tỉnh -->
           <div>
             <label class="block text-sm font-medium mb-1">Thành phố </label>
-            <input v-model="form.cityState" type="text" class="w-full border rounded-lg p-2" />
+            <input v-model="form.city" type="text" class="w-full border rounded-lg p-2" />
           </div>
 
           <!-- Quốc gia -->

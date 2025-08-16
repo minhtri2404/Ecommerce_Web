@@ -45,6 +45,10 @@ const startServer = async () => {
     //Localhost:4000/api/cart
     const cartRouter = require('./src/routes/cartRoute');
     app.use('/api/cart', cartRouter);
+
+    //Localhost:4000/api/order
+    const orderRouter = require('./src/routes/orderRoute');
+    app.use('/api/orders', orderRouter)
     
     app.get('/', (req, res) => {
       res.json({ message: 'Welcome' });

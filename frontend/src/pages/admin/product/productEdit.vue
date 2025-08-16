@@ -212,11 +212,8 @@ const showToast = (type, title, message) => {
 // Gọi API để lấy danh mục của sản phẩm
 const fetchCategories = async () => {
   try {
-    const res = await axios.get('http://localhost:4000/api/categories/', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    const res = await axios.get('http://localhost:4000/api/categories/')
+    console.log('categories fetch:', res.data.categories);
     if (res.data.success) {
       categories.value = res.data.categories
     } else {
@@ -243,7 +240,7 @@ const fetchProducts = async() =>{
                 description: productData.description,
                 price: productData.price,
                 quantity: productData.quantity,
-                category: productData.category,
+                category: productData.category?._id || productData.category || '',
                 sizes: productData.sizes,
                 colors: productData.colors,
                 isFeatured: productData.isFeatured,
