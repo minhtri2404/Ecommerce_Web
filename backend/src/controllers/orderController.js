@@ -38,17 +38,21 @@ class OrderController{
                 image: item.image || product.images?.[0] || "",
             });
             }
-
-            const totalAmount = orderProducts.reduce((sum, p) => sum + p.price * p.quantity, 0) - (discountAmount || 0);
+            const subtotal  = orderProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
+            let discountValue = 0;
+            if (discountCode === "SALE20") {
+                discountValue = subtotal * 0.2; // giảm 20%
+            }
+            const totalAmount = subtotal - discountValue;
 
             const newOrder = new Order({
-            user: userId,
-            products: orderProducts,
-            totalAmount,
-            discountCode,
-            discountAmount,
-            shippingAddress,
-            paymentMethod,
+                user: userId,
+                products: orderProducts,
+                totalAmount,
+                discountCode,
+                discountAmount: discountValue,
+                shippingAddress,
+                paymentMethod,
             });
 
             await newOrder.save();

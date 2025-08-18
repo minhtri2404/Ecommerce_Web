@@ -1,5 +1,13 @@
 <template>
   <div class="min-h-screen bg-gray-50 p-8">
+    <!-- Alert Toast -->
+    <Alert
+      v-model="showAlert"
+      :type="alertType"
+      :title="alertTitle"
+      :message="alertMessage"
+      :duration="3000"
+    />
     <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- Thông tin giao hàng -->
       <div class="bg-white p-6 rounded-2xl shadow">
@@ -100,6 +108,12 @@
             <span>Tạm tính</span>
             <span>{{ formatPrice(subtotal) }}</span>
           </div>
+
+           <div class="flex justify-between" v-if="discountAmount > 0">
+            <span>Giảm giá</span>
+            <span>-{{ formatPrice(discountAmount) }}</span>
+          </div>
+
           <div class="flex justify-between">
             <span>Phí vận chuyển</span>
             <span>Miễn phí</span>
@@ -112,12 +126,13 @@
         </div>
 
         <button
+          @click="handleCheckout"
           class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition"
         >
           Tiến hành thanh toán
         </button>
 
-        <div class="mt-4 text-sm text-gray-500">
+        <div class="mt-4 text-sm text-gray-500 text-center">
           Thanh toán an toàn. Thông tin của bạn được xử lý an toàn.
         </div>
       </div>
@@ -129,6 +144,8 @@
 import { ref, onMounted, computed } from "vue"
 import axios from "axios"
 import { useRouter } from "vue-router"
+import Alert from '@/components/Alert/ComAlert.vue';
+
 
 const router = useRouter()
 const cart = ref([])
@@ -144,6 +161,21 @@ const form = ref({
 })
 
 const discountCode = ref("")
+const discountAmount = ref(0) // demo
+// ALERT state
+const showAlert = ref(false);
+const alertType = ref('success'); // success | error
+const alertTitle = ref('');
+const alertMessage = ref('');
+
+const showToast = (type, title, message) => {
+  alertType.value = type;
+  alertTitle.value = title;
+  alertMessage.value = message;
+  showAlert.value = true;
+}
+
+
 
 const formatPrice = (value) => {
   if (!value) return "0đ"
@@ -179,15 +211,62 @@ const subtotal = computed(() =>
   cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
 )
 
-const total = computed(() => subtotal.value) 
+// Tính lại total = subtotal - discountAmount
+const total = computed(() => subtotal.value - discountAmount.value)
 
 const applyDiscount = () => {
   if (!discountCode.value) {
-    alert("Vui lòng nhập mã giảm giá!")
+    showToast('error', 'Lỗi', 'Vui lòng nhập mã giảm giá!')
     return
   }
-  alert(`Mã ${discountCode.value} đã được áp dụng (demo)`)
+
+  if (discountCode.value === "SALE20") {
+    discountAmount.value = subtotal.value * 0.2
+    showToast('success', 'Thành công', `Áp dụng mã SALE20: Giảm ${formatPrice(discountAmount.value)}`)
+  } else {
+    discountAmount.value = 0
+    showToast('error', 'Lỗi', 'Mã giảm giá không hợp lệ')
+  }
 }
+
+
+// Gọi API để tạo đơn hàng
+const handleCheckout = async() => {
+  try {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      router.push("/login")
+      return
+    }
+    const formData = {
+      shippingAddress: {
+        fullName: form.value.fullName,
+        phone: form.value.phone,
+        address: form.value.address,
+        city: form.value.city,
+        country: form.value.country,
+      },
+      paymentMethod: form.value.paymentMethod,
+      discountCode: discountCode.value || null,
+      discountAmount: discountAmount.value
+    }
+
+    const res = await axios.post("http://localhost:4000/api/orders/create", formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (res.data.success) {
+      showToast('success', 'Thành công', res.data.message)
+        setTimeout(() => {
+        router.push('/my-orders')
+      }, 2000)
+    } else{
+      showToast('error', 'Lỗi', res.data.message || 'Đã xảy ra lỗi khi tạo đơn hàng')
+    }
+  } catch (error) {
+    showToast('error', 'Lỗi', error.response?.data?.error || 'Đã xảy ra lỗi khi tạo đơn hàng')
+  }
+}
+
 
 onMounted(() => {
   fetchCart()

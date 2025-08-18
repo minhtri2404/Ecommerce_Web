@@ -173,7 +173,7 @@ const filteredOrders = computed(() => {
   if (!search.value) return orders.value
   return orders.value.filter(order =>
     order._id.includes(search.value) ||
-    order.user?.name?.toLowerCase().includes(search.value.toLowerCase())
+    order.shippingAddress?.fullName?.toLowerCase().includes(search.value.toLowerCase())
   )
 })
 
