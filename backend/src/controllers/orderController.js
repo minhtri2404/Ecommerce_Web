@@ -7,11 +7,11 @@ class OrderController{
     createOrder = async (req, res) => {
         try {
             const userId = req.user._id;
-            const { shippingAddress, paymentMethod, discountCode, discountAmount } = req.body;
+            const { shippingAddress, paymentMethod, discountCode } = req.body;
 
             const cart = await Cart.findOne({ user: userId }).populate('items.product');
             if (!cart || cart.items.length === 0) {
-            return res.status(400).json({ error: 'Giỏ hàng trống' });
+                return res.status(400).json({ error: 'Giỏ hàng trống' });
             }
 
             const orderProducts = [];
@@ -45,6 +45,9 @@ class OrderController{
             }
             const totalAmount = subtotal - discountValue;
 
+            // 🔑 Xác định paymentStatus
+            const paymentStatus = 'pending';
+
             const newOrder = new Order({
                 user: userId,
                 products: orderProducts,
@@ -53,6 +56,7 @@ class OrderController{
                 discountAmount: discountValue,
                 shippingAddress,
                 paymentMethod,
+                paymentStatus,
             });
 
             await newOrder.save();
@@ -79,6 +83,58 @@ class OrderController{
             }
 
             return res.status(200).json({ success: true, orders });
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
+    }
+
+    // Lấy đơn hàng theo ID
+    getOrderById = async(req, res) => {
+        try {
+            const {id} = req.params
+            const order = await Order.findById(id)
+                .populate('user', 'name email') // lấy thông tin user
+                .populate('products.product', 'name price images');
+
+            if (!order) {
+                return res.status(404).json({success: false, message: 'Không có đơn hàng nào'})
+            }
+
+            return res.status(200).json({success: true, order})
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
+    }
+    
+    // Cập nhật trạng thái đơn hàng
+    updateOrderStatus = async(req, res) => {
+        try {
+            const {id} = req.params
+            const {status} = req.body
+
+            // Kiểm tra trạng thái hợp lệ
+            const validStatuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+            if (!validStatuses.includes(status)) {
+                return res.status(400).json({ success: false, message: 'Trạng thái đơn hàng không hợp lệ' });
+            }
+
+            // Tạo object update
+            const updateFields = { status };
+            if (status === 'delivered') {
+                updateFields.paymentStatus = 'paid';
+            } else if (status === 'cancelled') {
+                updateFields.paymentStatus = 'failed';
+            } else {
+            // các trạng thái còn lại thì để pending
+                updateFields.paymentStatus = 'pending';
+            }
+
+            const orderStatus = await Order.findByIdAndUpdate(id, updateFields, {new: true})
+            if (!orderStatus) {
+                return res.status(404).json({success: false, message: 'Không tìm thấy đơn hàng nào'})
+            }
+
+            return res.status(200).json({success: true, message: 'Cập nhật trạng thái đơn hàng thành công', orderStatus})
         } catch (error) {
             return res.status(500).json({ success: false, error: 'Server error' });
         }

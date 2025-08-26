@@ -65,7 +65,7 @@
 
               <td class="px-4 py-3 text-center">
                 <router-link
-                  :to="`/admin-dashboard/orders/${order._id}`"
+                  :to="`/admin-dashboard/order/${order._id}`"
                   class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                 >
                   Chi tiết
