@@ -125,11 +125,8 @@ const isCompleted = (currentStatus, step) => {
 // Gọi API để lấy danh sách đơn hàng của customer
 const fetchOrders = async() => {
   try {
-    const token = localStorage.getItem('token')
-    const res = await axios.get("http://localhost:4000/api/orders", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const res = await axios.get("http://localhost:4000/api/orders/my-order", {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     })
     if (res.data.success) {
       orders.value = res.data.orders

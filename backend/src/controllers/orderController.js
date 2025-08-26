@@ -88,6 +88,18 @@ class OrderController{
         }
     }
 
+    // lấy đơn hàng theo customer
+    getMyOrder = async(req, res) => {
+        try {
+            const userId = req.user._id;
+            const orders = await Order.find({user: userId})
+                .populate('user', 'name email') // lấy thông tin user
+            return res.status(200).json({success: true, orders})
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Server error' });
+        }
+    }
+
     // Lấy đơn hàng theo ID
     getOrderById = async(req, res) => {
         try {
