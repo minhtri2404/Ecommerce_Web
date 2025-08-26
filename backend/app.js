@@ -49,6 +49,10 @@ const startServer = async () => {
     //Localhost:4000/api/order
     const orderRouter = require('./src/routes/orderRoute');
     app.use('/api/orders', orderRouter)
+
+    //Localhost:4000/api/customer
+    const customerRouter = require('./src/routes/customerRoute');
+    app.use('/api/customer', customerRouter)
     
     app.get('/', (req, res) => {
       res.json({ message: 'Welcome' });
