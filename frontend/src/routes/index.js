@@ -23,6 +23,7 @@ import EditProduct from '../pages/admin/product/productEdit.vue'
 import OrderList from '../pages/admin/order/orderList.vue'
 import OrderDetail from '../pages/admin/order/orderView.vue'
 import CustomerList from '../pages/admin/user/listCustomer.vue'
+import EditCustomer from '../pages/admin/user/editCustomer.vue'
 const routes = [
   {
     path: '/',
@@ -54,7 +55,8 @@ const routes = [
       { path: 'product/:id', name: EditProduct, component: EditProduct},
       { path: 'order', name: OrderList, component: OrderList},
       { path: 'order/:id', name: OrderDetail, component: OrderDetail},    
-      { path: 'user', name: CustomerList, component: CustomerList},    
+      { path: 'user', name: CustomerList, component: CustomerList}, 
+      { path: 'user/:id', name: EditCustomer, component: EditCustomer},       
 
 
       // Các trang admin khác
