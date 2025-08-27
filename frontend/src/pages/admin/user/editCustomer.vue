@@ -44,11 +44,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import Alert from '@/components/Alert/ComAlert.vue';
 
 const route = useRoute()
+const router = useRouter()
 const id = route.params.id
 
 const user = ref({
@@ -83,6 +84,29 @@ const fetchCustomers = async() => {
         }
     } catch (error) {
         showToast('error', 'Lỗi', error.response?.data?.error || 'Không thể tải dữ liệu.')
+    }
+}
+
+// Nhấn Submit và Gọi API để cập nhật
+const handleSubmit = async() => {
+    try {
+        const res = await axios.put(`http://localhost:4000/api/customer/${id}`, user.value, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            } 
+        })
+        if (res.data.success) {
+            showToast('success', 'Thành công', res.data.message)
+            setTimeout(() => {
+                router.push('/admin-dashboard/user')
+            }, 2000);
+        } else{
+            showToast('error', 'Thất bại', res.data.error || 'Cập nhật thất bại.')
+        }
+    } catch (error) {
+        if (error.response && !error.response.data.success) {
+            showToast('error', 'Đã xảy ra lỗi khi tải dữ liệu.', error.response.data.error);
+        }
     }
 }
 

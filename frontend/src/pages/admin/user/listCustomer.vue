@@ -156,6 +156,31 @@ const fetchCustomer = async() => {
     }
 }
 
+// Gọi APi xóa khách hàng
+const deleteUser = async(id) => {
+    const confirmDelete = confirm('Bạn có muốn xóa khách hàng này không')
+    if (confirmDelete) {
+        try {
+            const res = await axios.delete(`http://localhost:4000/api/customer/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (res.data.success) {
+                showToast('success', 'Thành công', res.data.message)
+                await fetchCustomer() 
+            } else{
+                showToast('error', 'Thất bại', res.data.error || 'Xóa thất bại.')
+            }
+        } catch (error) {
+            if (error.response && !error.response.data.success) {
+                showToast('error', 'Đã xảy ra lỗi khi tải dữ liệu.', error.response.data.error);
+            }
+        }
+    }
+    
+}
+
 // Tìm kiếm khách hàng theo tên
 const filteredUsers = computed(() =>
   users.value.filter(user =>
