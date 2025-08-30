@@ -5,6 +5,10 @@
         <h3 class="text-lg font-semibold">{{ title }}</h3>
         <p class="text-2xl font-bold mt-2">{{ value }}</p>
       </div>
+      <!-- Icon -->
+      <span class="text-3xl">
+        <i :class="`mdi ${icon}`"></i>
+      </span>
     </div>
   </div>
 </template>
@@ -14,6 +18,8 @@ import { defineProps } from 'vue';
 defineProps({
   title: String,
   value: String,
-  bgColor: String
+  bgColor: String,
+  icon: String
 })
 </script>
+
