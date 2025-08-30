@@ -45,6 +45,50 @@ class DashBoardController{
             return res.status(500).json({success: false, error: 'Server error'})
         }
     }
+
+    // Biểu đồ doanh thu theo tháng
+    getRevenue = async(req, res) => {
+        try {
+            const revenue = await Order.aggregate([
+                {
+                    $match:{
+                        $or: [
+                            // Đơn COD: chỉ tính khi giao thành công
+                            { paymentMethod: "cod", paymentStatus: "paid", status: "delivered" },
+
+                            // Đơn online: đã trả tiền thì tính ngay
+                            { paymentMethod: { $ne: "cod" }, paymentStatus: "paid" }
+                        ]
+                    },
+                },
+                {
+                    $group: {
+                        _id: {$month: "$createdAt"},
+                        totalRevenue: { $sum: "$totalAmount" }
+                    },
+                },
+                {
+                    $sort: { "_id": 1 }
+                }
+            ])
+
+            // Tạo mảng 12 tháng mặc định = 0
+            let fullYearRevenue = Array.from({ length: 12 }, (_, i) => ({
+                _id: i + 1,
+                totalRevenue: 0
+            }));
+
+            // Gán dữ liệu thật vào mảng 12 tháng
+            revenue.forEach(item => {
+                const monthIndex = item._id - 1; // tháng 1 -> index 0
+                fullYearRevenue[monthIndex].totalRevenue = item.totalRevenue;
+            });
+
+            return res.status(200).json({success: true, data: fullYearRevenue})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server error'})
+        }
+    }
 }
 
 module.exports = new DashBoardController()

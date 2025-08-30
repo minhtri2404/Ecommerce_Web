@@ -4,5 +4,5 @@ const dashboardController = require("../controllers/dashboardController")
 const authMiddleware = require("../middleware/authMiddleware")
 
 router.get('/dashboard', authMiddleware, dashboardController.getAllDashboard)
-
+router.get('/revenue-by-month', authMiddleware, dashboardController.getRevenue)
 module.exports = router;
