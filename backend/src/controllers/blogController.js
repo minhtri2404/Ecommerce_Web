@@ -45,6 +45,17 @@ class BlogController{
             return res.status(500).json({success: false, error: 'Server Error'})
         }
     }
+
+    // Lấy thông tin bài viết theo id
+    getBlogById = async(req, res) => {
+        try {
+            const { id } = req.params
+            const blogById = await Blog.findById(id)
+            return res.status(200).json({success: true, blogById})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server Error'})
+        }
+    }
 }
 
 module.exports = new BlogController();

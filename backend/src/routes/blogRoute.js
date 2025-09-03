@@ -5,5 +5,6 @@ const authMiddleware = require("../middleware/authMiddleware")
 
 router.post("/add", authMiddleware, blogController.addBlog)
 router.get('/', blogController.getAllBlog)
+router.get('/:id', blogController.getBlogById)
 
 module.exports = router;
