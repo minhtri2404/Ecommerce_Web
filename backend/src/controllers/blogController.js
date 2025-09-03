@@ -35,6 +35,16 @@ class BlogController{
             }
         })
     }
+
+    // Hiển thị tất cả bài viết
+    getAllBlog = async(req, res) => {
+        try {
+            const blog = await Blog.find()
+            return res.status(200).json({success: true, blog})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server Error'})
+        }
+    }
 }
 
 module.exports = new BlogController();
