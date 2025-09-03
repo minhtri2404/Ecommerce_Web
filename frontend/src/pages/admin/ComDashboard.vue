@@ -69,7 +69,7 @@ const formatCurrency = (value) => {
 
 const fetchCart = async() => {
   try {
-    const res = await axios("http://localhost:4000/api/dashboards/dashboard", {
+    const res = await axios.get("http://localhost:4000/api/dashboards/dashboard", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }

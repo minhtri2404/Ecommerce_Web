@@ -40,7 +40,7 @@ const LineChart = Line
 // Gọi api để hiển thị doanh thu theo tháng
 const fetchMonth = async() => {
   try {
-    const res = await axios("http://localhost:4000/api/dashboards/revenue-by-month", {
+    const res = await axios.get("http://localhost:4000/api/dashboards/revenue-by-month", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -59,7 +59,6 @@ const fetchMonth = async() => {
               backgroundColor: "#3b82f6",
               fill: false,
             },
-            
           ]
         }
     } 

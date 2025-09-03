@@ -89,6 +89,28 @@ class DashBoardController{
             return res.status(500).json({success: false, error: 'Server error'})
         }
     }
+
+    // Biểu đồ cho thống kê thanh toán
+    getPaymentStart = async(req, res) => {
+        try {
+            const paymentStart = await Order.aggregate([
+                {
+                    $match: { paymentStatus: "paid" } // chỉnh tính đơn hàng nào trạng thái paid
+                },
+                {
+                    $group: {
+                        _id: "$paymentMethod",
+                        count: { $sum: 1 },
+                        totalAmount: { $sum: "$totalAmount"}
+                    }
+                }
+            ])
+
+            return res.status(200).json({success: true, data: paymentStart})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server error'})
+        }
+    }
 }
 
 module.exports = new DashBoardController()
