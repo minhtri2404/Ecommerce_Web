@@ -115,3 +115,26 @@ export const back = {
     )
   },
 }
+
+export const blog = {
+  render() {
+    return h(
+      'svg',
+      {
+        class: 'w-6 h-6',
+        xmlns: 'http://www.w3.org/2000/svg',
+        fill: 'none',
+        viewBox: '0 0 24 24',
+      },
+      [
+        h('path', {
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          d: 'M12 20h9M12 4h9M4 9h16M4 15h16',
+        }),
+      ]
+    )
+  },
+}
