@@ -25,6 +25,7 @@ import OrderDetail from '../pages/admin/order/orderView.vue'
 import CustomerList from '../pages/admin/user/listCustomer.vue'
 import EditCustomer from '../pages/admin/user/editCustomer.vue'
 import BlogList from '../pages/admin/blog/blogList.vue'
+import AddBlog from '../pages/admin/blog/blogAdd.vue'
 const routes = [
   {
     path: '/',
@@ -59,6 +60,7 @@ const routes = [
       { path: 'user', name: CustomerList, component: CustomerList}, 
       { path: 'user/:id', name: EditCustomer, component: EditCustomer},       
       { path: 'blog', name: BlogList, component: BlogList},
+      { path: 'add-blog', name: AddBlog, component: AddBlog},
       // Các trang admin khác
     ]
   }

@@ -23,7 +23,7 @@
             </div>
 
             <router-link
-                :to="`/admin-dashboard/blog/add-blog`"
+                to="/admin-dashboard/add-blog"
                 class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded shadow"
                 >
                 Thêm bài viết
