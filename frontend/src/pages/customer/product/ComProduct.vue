@@ -118,10 +118,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import Alert from '@/components/Alert/ComAlert.vue';
 
+const route = useRoute()
+const categoryId = ref(null)
 const products = ref([])
 const totalProducts = ref(0)
 const categories = ref([])
@@ -180,6 +183,7 @@ const toggleColor = (color) => {
 // Gọi API để lấy danh sách sản phẩm
 const fetchProducts = async () => {
   let query = []
+  if (categoryId.value) query.push(`category=${categoryId.value}`)
   if (searchQuery.value) query.push(`search=${searchQuery.value}`)
   if (selectedCategories.value.length) query.push(`category=${selectedCategories.value.join(',')}`)
   if (selectedPrice.value) query.push(`minPrice=${selectedPrice.value.min}&maxPrice=${selectedPrice.value.max}`)
@@ -230,7 +234,14 @@ const formatPrice = (price) => {
 }
 
 onMounted(() => {
+  categoryId.value = route.query.category || null
   fetchCategories()
+  fetchProducts()
+})
+
+// Nếu user ở lại /shop và query param category thay đổi, tự động fetch
+watch(() => route.query.category, (newCategory) => {
+  categoryId.value = newCategory || null
   fetchProducts()
 })
 </script>

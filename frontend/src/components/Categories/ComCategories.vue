@@ -31,7 +31,8 @@
           <h2 class="text-xl font-medium">{{ category.categoryName }}</h2>
           <!-- Chưa xử lý router link này -->
           <router-link
-            :to="`/products/category/${category._id}`"
+            v-if="category.id"
+            :to="`/shop?category=${category.id}`"
             class="flex items-center gap-1 text-sm text-white/70"
           >
             Xem sản phẩm
