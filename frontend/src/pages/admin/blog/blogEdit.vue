@@ -82,11 +82,12 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import Alert from '@/components/Alert/ComAlert.vue'
 
 const route = useRoute()
+const router = useRouter()
 const id = route.params.id
 
 // State blog
@@ -132,6 +133,34 @@ const fetchBlog = async() => {
             Blog.value = res.data.blogById
         } else{
             showToast('error', 'Lỗi', res.data.error || 'Không thể tải dữ liệu.')
+        }
+    } catch (error) {
+        if (error.response && !error.response.data.success) {
+            showToast('error', 'Đã xảy ra lỗi khi tải dữ liệu.', error.response.data.error);
+        }
+    }
+}
+
+// Gọi APi để cập nhật bài viết
+const handleSubmit = async() => {
+    const formData = new FormData()
+    formData.append('title', Blog.value.title)
+    formData.append('content', Blog.value.content)
+    formData.append("image", Blog.value.image);
+
+    try {
+        const res = await axios.put(`http://localhost:4000/api/blog/${id}`, formData, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        if (res.data.success) {
+            showToast('success', 'Thành công', res.data.message)
+            setTimeout(() => {
+                router.push('/admin-dashboard/blog')
+            }, 2000)
+        } else{
+            showToast('error', 'Thất bại', res.data.message)
         }
     } catch (error) {
         if (error.response && !error.response.data.success) {
