@@ -10,7 +10,7 @@
 <script setup>
 import Categories from '@/components/Categories/ComCategories.vue'
 import PopularProducts from '@/components/PopularProducts/PopularProducts.vue';
-import LatestBlogPosts from '../pages/customer/blog/LatestBlogPosts.vue';
+import LatestBlogPosts from '../blog/LatestBlogPosts.vue';
 </script>
 
 
