@@ -28,8 +28,8 @@
                     </RouterLink>
 
                     <!-- Nội dung rút gọn -->
-                    <p class="text-sm text-gray-600 mt-1 line-clamp-2">
-                        {{ blog.content }}
+                    <p class="text-sm text-gray-600 mt-1 line-clamp-2" >
+                        {{ blog.content.replace(/<[^>]+>/g, '') }}
                     </p>
                 </div>
             </div>

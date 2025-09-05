@@ -14,6 +14,7 @@ import Cart from '../pages/ComCart.vue'
 import Checkout from '../pages/ComCheckout.vue'
 import MyOrder from '../pages/ComMyOrder.vue'
 import About from '../pages/customer/blog/ComBlog.vue'
+import AboutDetail from '../pages/customer/blog/ComBlogDetail.vue'
 import AdminDashboard from '../pages/admin/ComDashboard.vue' // ✅ Chỉ là page
 import CategoryList from '../pages/admin/category/categoryList.vue'
 import AddCategory from '../pages/admin/category/categoryAdd.vue'
@@ -42,7 +43,8 @@ const routes = [
       { path: 'cart', name: 'Cart', component: Cart},
       { path: 'checkout', name: 'Checkout', component: Checkout},
       { path: 'my-orders', name: 'MyOrder', component: MyOrder},
-      { path: 'about', name: 'About', component: About} 
+      { path: 'about', name: 'About', component: About},
+      { path: '/blog/:id', name: 'AboutDetail', component: AboutDetail}
       // Thêm các route khác của khách hàng tại đây
     ]
   },
