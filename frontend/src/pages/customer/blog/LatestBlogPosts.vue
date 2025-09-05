@@ -7,16 +7,20 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12 max-w-6xl mx-auto">
       <div
-        v-for="(post, index) in posts"
-        :key="index"
+        v-for="blog in blogs"
+        :key="blog._id"
         class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
       >
-        <img :src="post.image" :alt="post.title" class="w-full h-48 object-cover" />
+        <img 
+          :src="`http://localhost:4000/uploads/blog/${blog.image}`"
+          alt="Hình ảnh danh mục" 
+          class="w-full h-48 object-cover" 
+        />
         <div class="p-4">
-          <h2 class="text-lg font-semibold mb-1">{{ post.title }}</h2>
-          <p class="text-sm text-gray-500 mb-2">{{ post.excerpt }}</p>
+          <h2 class="text-lg font-semibold mb-1">{{ blog.title }}</h2>
+          <p class="text-sm text-gray-500 mb-2">{{ blog.slug }}</p>
           <a
-            :href="post.url"
+            :href="`/blog/${blog._id}`"
             class="inline-block mt-3 text-sm text-indigo-500 hover:underline"
           >
             Đọc thêm →
@@ -28,31 +32,25 @@
 </template>
 
 <script setup>
-const posts = [
-  {
-    title: 'Top 5 xu hướng thời trang hè 2025',
-    excerpt: 'Khám phá những phong cách không thể bỏ qua mùa hè này...',
-    image: new URL('@/assets/img/blog/blog-2.jpg', import.meta.url).href,
-    url: '/blog/summer-trends-2025',
-  },
-  {
-    title: 'Cách phối đồ basic mà vẫn thu hút',
-    excerpt: 'Dành cho bạn muốn đơn giản mà không đơn điệu...',
-    image: new URL('@/assets/img/blog/blog-8.jpg', import.meta.url).href,
-    url: '/blog/basic-style-guide',
-  },
-  {
-    title: '5 món đồ mọi cô gái nên có',
-    excerpt: 'Một số item cơ bản giúp bạn dễ phối và ứng dụng hàng ngày.',
-    image: new URL('@/assets/img/blog/blog-4.jpg', import.meta.url).href,
-    url: '/blog/must-have-items',
-  },
+import { ref, onMounted } from 'vue'
+import axios from 'axios';
 
-  {
-    title: 'Cách phối đồ đường phố',
-    excerpt: 'Một số item cơ bản giúp bạn dễ phối và ứng dụng hàng ngày.',
-    image: new URL('@/assets/img/blog/blog-6.jpg', import.meta.url).href,
-    url: '/blog/must-have-items',
-  },
-];
+const blogs = ref([])
+
+// Gọi API để hiển thị tất cả bài viết
+const fetchNewBlog = async() => {
+  try {
+    const res = await axios.get('http://localhost:4000/api/blog')
+    if (res.data.success) {
+      blogs.value = res.data.blog
+    }
+  } catch (error) {
+    if (error.response && !error.response.data.success) {
+      console.log('error', 'Đã xảy ra lỗi khi tải dữ liệu.', error.response.data.error);
+    }
+  }
+}
+
+
+onMounted(fetchNewBlog)
 </script>
