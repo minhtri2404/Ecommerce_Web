@@ -103,6 +103,30 @@ class BlogController{
             }
         })
     }
+
+    // Xóa bài viết
+    deleteBlog = async(req, res) => {
+        try {
+            const { id } = req.params
+
+            const deleteBlog = await Blog.findByIdAndDelete(id)
+            if (!deleteBlog) {
+                return res.status(404).json({success: false, message: 'Không tìm thấy bài viết'})
+            }
+
+            //Nếu có hình ảnh thì xóa
+            if (deleteBlog.image) {
+                const imagePath = path.join(__dirname, '..', '..', 'public', 'uploads/blog', deleteBlog.image )
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath)
+                }
+            }
+    
+            return res.status(200).json({success: true, message: 'Xóa thành công'})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server Error'})
+        }
+    }
 }
 
 module.exports = new BlogController();

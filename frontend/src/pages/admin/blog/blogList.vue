@@ -164,6 +164,30 @@ const fetchBlog = async() => {
     }
 }
 
+// Gọi API để xóa bài viết
+const deleteBlog = async(id) => {
+    const confirmDelete = confirm('Bạn có muốn xóa bài viết này không')
+    if (confirmDelete) {
+        try {
+            const res = await axios.delete(`http://localhost:4000/api/blog/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (res.data.success) {
+                showToast('success', 'Thành công', res.data.message)
+                await fetchBlog()
+            } else{
+                showToast('error', 'Thất bại', res.data.message)
+            }
+        } catch (error) {
+            if (error.response && !error.response.data.success) {
+                showToast('error', 'Đã xảy ra lỗi khi tải dữ liệu.', error.response.data.error);
+            }
+        }
+    }
+}
+
 // Tìm kiếm khách hàng theo tiêu đề
 const filteredBlog = computed(() =>
   blogs.value.filter(blog =>
