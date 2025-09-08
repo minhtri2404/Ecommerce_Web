@@ -5,5 +5,5 @@ const authMiddleware = require("../middleware/authMiddleware")
 
 router.post("/add", authMiddleware, couponController.addCoupon)
 router.get("/", couponController.getAllCoupon)
-
+router.get("/:id", couponController.getCoupon)
 module.exports = router;

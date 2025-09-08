@@ -42,6 +42,17 @@ class CouponController{
             return res.status(500).json({success: false, error: 'Server Error'})
         }
     }
+
+    // HIển thị mã giảm giá thei ID
+    getCoupon = async(req, res) => {
+        try {
+            const {id} = req.params
+            const coupon = await Coupon.findById(id)
+            return res.status(200).json({success: true, coupon})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server Error'})
+        }
+    }
 }
 
 
