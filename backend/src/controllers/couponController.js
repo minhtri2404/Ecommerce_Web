@@ -86,6 +86,17 @@ class CouponController{
             return res.status(500).json({success: false, error: 'Server Error'})
         }
     }
+
+    // Xóa mã giảm giá
+    deleteCoupon = async(req, res) => {
+        try {
+            const {id} = req.params
+            const deleteCoupon = await Coupon.findByIdAndDelete(id)
+            return res.status(200).json({success: true, message: 'Xóa mã giảm giá thành công', coupon: deleteCoupon})
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server Error'})
+        }
+    }   
 }
 
 

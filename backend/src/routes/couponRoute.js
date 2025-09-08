@@ -7,4 +7,5 @@ router.post("/add", authMiddleware, couponController.addCoupon)
 router.get("/", couponController.getAllCoupon)
 router.get("/:id", couponController.getCoupon)
 router.put("/:id", authMiddleware, couponController.updateCoupon)
+router.delete("/:id", authMiddleware, couponController.deleteCoupon)
 module.exports = router;
