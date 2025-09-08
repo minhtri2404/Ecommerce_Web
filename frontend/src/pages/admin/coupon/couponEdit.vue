@@ -69,9 +69,9 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Ngày bắt đầu</label>
                     <input
+                        v-model="newCoupon.startDate"
                         type="date"
-                        :value="formattedStartDate"
-                        @input="val => newCoupon.startDate = val"
+                        placeholder="YYYY-MM-DD"
                         class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-indigo-200"
                     />
                 </div>
@@ -80,9 +80,9 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Ngày kết thúc</label>
                     <input
+                        v-model="newCoupon.endDate"
                         type="date"
-                        :value="formattedEndDate"
-                        @input="val => newCoupon.endDate = val"
+                        placeholder="YYYY-MM-DD"
                         class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-indigo-200"
                     />
                 </div>
@@ -121,13 +121,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import Alert from '@/components/Alert/ComAlert.vue'
 
 const route = useRoute()
-// const router = useRouter()
+const router = useRouter()
 const id = route.params.id
 
 // State newCoupon
@@ -159,7 +159,12 @@ const fetchCouponById = async() => {
     try {
         const res = await axios.get(`http://localhost:4000/api/coupon/${id}`)
         if (res.data.success) {
-            newCoupon.value = res.data.coupon
+            const coupon = res.data.coupon
+            newCoupon.value = {
+                ...coupon,
+                startDate: coupon.startDate ? coupon.startDate.slice(0, 10) : '',
+                endDate: coupon.endDate ? coupon.endDate.slice(0, 10) : ''
+            }
         } else{
             showToast('error', 'Lỗi', res.data.error || 'Không thể tải dữ liệu.')
         }
@@ -174,28 +179,32 @@ const fetchCouponById = async() => {
     }
 }
 
-
-
-
-
-// Computed để format date cho input type="date"
-const formattedStartDate = computed({
-  get() {
-    return newCoupon.value.startDate ? newCoupon.value.startDate.slice(0, 10) : ''
-  },
-  set(val) {
-    newCoupon.value.startDate = val
-  }
-})
-
-const formattedEndDate = computed({
-  get() {
-    return newCoupon.value.endDate ? newCoupon.value.endDate.slice(0, 10) : ''
-  },
-  set(val) {
-    newCoupon.value.endDate = val
-  }
-})
+// Gọi API để cập nhật mã giảm giá
+const handleSubmit = async() => {
+    try {
+        const res = await axios.put(`http://localhost:4000/api/coupon/${id}`, newCoupon.value, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        if (res.data.success) {
+            showToast('success', 'Thành công', res.data.message)
+            setTimeout(() => {
+                router.push('/admin-dashboard/coupon')
+            }, 2000)
+        } else{
+            showToast('error', 'Thất bại', res.data.message)
+        }
+    } catch (error) {
+        if (error.response && !error.response.data.success) {
+            // ✅ Hiển thị message đúng từ backend
+            showToast('error', 'Thất bại', error.response.data.message);
+        } else {
+            // fallback nếu lỗi không mong muốn
+            showToast('error', 'Lỗi', 'Server Error');
+        }
+    }
+}
 
 
 onMounted(fetchCouponById)

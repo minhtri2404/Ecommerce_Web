@@ -53,6 +53,39 @@ class CouponController{
             return res.status(500).json({success: false, error: 'Server Error'})
         }
     }
+
+    // Cập nhật mã giảm giá
+    updateCoupon = async(req, res) => {
+        try {
+            const {id} = req.params
+            const {code, discountType, discountValue, minOrderAmount, startDate, endDate, usageLimit, isActive} = req.body
+
+            // Kiểm tra xem code có tồn tại chưa
+            const existingCoupon  = await Coupon.findOne({ code, _id: { $ne: id } })
+            if (existingCoupon) {
+                return res.status(400).json({success: false, message: 'Mã giảm giá đã tồn tại'})
+            }
+
+            // Kiểm tra ngày bắt đầu < ngày kết thúc
+            if (new Date(startDate) >= new Date(endDate)) {
+                return res.status(400).json({success: false, message: 'Ngày bắt đầu phải trước ngày kết thúc'})
+            }
+            // Kiểm tra giá trị giảm phải  > 0
+            if (discountValue <= 0) {
+                return res.status(400).json({success: false, message: 'Giá trị giảm giá phải lớn hơn 0'})
+            }
+
+            const updateData = {
+                code, discountType, discountValue, minOrderAmount, startDate, endDate, usageLimit, isActive
+            }
+
+            const updateCoupon = await Coupon.findByIdAndUpdate(id, updateData, {new: true})
+            return res.status(200).json({success: true, message: 'Cập nhật mã giảm giá thành công', coupon: updateCoupon})
+
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server Error'})
+        }
+    }
 }
 
 
