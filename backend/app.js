@@ -58,9 +58,13 @@ const startServer = async () => {
     const dashboardRoute = require('./src/routes/dashboardRoute')
     app.use('/api/dashboards', dashboardRoute)
 
-    //Localhost:4000/api/dashboards
+    //Localhost:4000/api/blog
     const blogRoute = require('./src/routes/blogRoute')
     app.use('/api/blog', blogRoute)
+
+    //Localhost:4000/api/coupon
+    const couponRoute = require('./src/routes/couponRoute')
+    app.use('/api/coupon', couponRoute)
     
     app.get('/', (req, res) => {
       res.json({ message: 'Welcome' });
