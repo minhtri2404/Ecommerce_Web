@@ -30,6 +30,7 @@ import EditCustomer from '../pages/admin/user/editCustomer.vue'
 import BlogList from '../pages/admin/blog/blogList.vue'
 import AddBlog from '../pages/admin/blog/blogAdd.vue'
 import EditBlog from '../pages/admin/blog/blogEdit.vue'
+import CouponList from '../pages/admin/coupon/couponList.vue'
 const routes = [
   {
     path: '/',
@@ -69,6 +70,7 @@ const routes = [
       { path: 'blog', name: BlogList, component: BlogList},
       { path: 'add-blog', name: AddBlog, component: AddBlog},
       { path: 'blog/:id', name: EditBlog, component: EditBlog},
+      { path: 'coupon', name: CouponList, component: CouponList},
       // Các trang admin khác
     ]
   }

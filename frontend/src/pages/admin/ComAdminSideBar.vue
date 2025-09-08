@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { dashboardicon, category, production, user, order, back, blog } from './iconn/icon'
+import { dashboardicon, category, production, user, order, back, blog, coupon } from './iconn/icon'
 
 const sidebarLinks = [
   { name: 'Trang tổng quan', path: '/admin-dashboard', icon: dashboardicon },
@@ -27,6 +27,7 @@ const sidebarLinks = [
   { name: 'Quản lý người dùng', path: '/admin-dashboard/user', icon: user },
   { name: 'Quản lý đơn hàng', path: '/admin-dashboard/order', icon: order },
   { name: 'Quản lý bài viết', path: '/admin-dashboard/blog', icon: blog },
+  { name: 'Quản lý mã giảm giá', path: '/admin-dashboard/coupon', icon: coupon },
   { name: 'Back', path: '/', icon: back },
 ]
 </script>

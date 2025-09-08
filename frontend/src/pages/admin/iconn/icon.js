@@ -138,3 +138,26 @@ export const blog = {
     )
   },
 }
+
+export const coupon = {
+  render() {
+    return h(
+      'svg',
+      {
+        class: 'w-6 h-6',
+        xmlns: 'http://www.w3.org/2000/svg',
+        fill: 'none',
+        viewBox: '0 0 24 24',
+      },
+      [
+        h('path', {
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          d: 'M4 7a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2 2 2 0 000 4 2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2a2 2 0 012-2 2 2 0 000-4 2 2 0 01-2-2V7z',
+        }),
+      ]
+    )
+  },
+}
