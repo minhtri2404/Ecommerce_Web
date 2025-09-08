@@ -1,6 +1,7 @@
 const Coupon = require('../models/couponModel')
 
 class CouponController{
+    // Thêm mã giảm giá
     addCoupon = async(req, res) => {
         try {
             const {code, discountType, discountValue, minOrderAmount, startDate, endDate, usageLimit, isActive} = req.body
@@ -27,6 +28,16 @@ class CouponController{
             await newCoupon.save()
             return res.status(201).json({success: true, message: 'Tạo mã giảm giá thành công', coupon: newCoupon})
 
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server Error'})
+        }
+    }
+
+    // Hiển thị tất cả mã giảm giá
+    getAllCoupon = async(req, res) => {
+        try {
+            const coupon = await Coupon.find()
+            return res.status(200).json({success: true, coupon})
         } catch (error) {
             return res.status(500).json({success: false, error: 'Server Error'})
         }
