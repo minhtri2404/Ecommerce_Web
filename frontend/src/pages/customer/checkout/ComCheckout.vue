@@ -102,6 +102,25 @@
           </div>
         </div>
 
+        <!-- Danh sách mã giảm giá có sẵn -->
+          <div v-if="coupons.length > 0" class="space-y-2 max-h-40 overflow-y-auto border rounded-lg p-2">
+            <div v-for="coupon in coupons" :key="coupon._id"
+                 class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer"
+                 @click="selectCoupon(coupon.code)">
+              <div>
+                <p class="font-medium text-sm">{{ coupon.code }}</p>
+                <p class="text-xs text-gray-500">
+                  Giảm 
+                  <span v-if="coupon.discountType === 'percentage'">{{ coupon.discountValue }}%</span>
+                  <span v-else>{{ formatPrice(coupon.discountValue) }}</span>
+                  (ĐH tối thiểu {{ formatPrice(coupon.minOrderAmount) }})
+                </p>
+              </div>
+              <span class="text-xs text-indigo-600">Chọn</span>
+            </div>
+          </div>
+          <div v-else class="text-gray-400 text-sm">Không có mã giảm giá nào</div>
+
         <!-- Giá tiền -->
         <div class="space-y-2 text-gray-600">
           <div class="flex justify-between">
@@ -149,6 +168,7 @@ import Alert from '@/components/Alert/ComAlert.vue';
 
 const router = useRouter()
 const cart = ref([])
+const coupons = ref([])
 
 const form = ref({
   fullName: "",
@@ -214,21 +234,40 @@ const subtotal = computed(() =>
 // Tính lại total = subtotal - discountAmount
 const total = computed(() => subtotal.value - discountAmount.value)
 
-const applyDiscount = () => {
-  if (!discountCode.value) {
-    showToast('error', 'Lỗi', 'Vui lòng nhập mã giảm giá!')
-    return
-  }
-
-  if (discountCode.value === "SALE20") {
-    discountAmount.value = subtotal.value * 0.2
-    showToast('success', 'Thành công', `Áp dụng mã SALE20: Giảm ${formatPrice(discountAmount.value)}`)
-  } else {
-    discountAmount.value = 0
-    showToast('error', 'Lỗi', 'Mã giảm giá không hợp lệ')
+// Gọi API để lấy danh sách mã giảm giá
+const fetchCoupons = async() => {
+  try {
+    const res = await axios.get('http://localhost:4000/api/coupon/')
+    if (res.data.success) {
+      coupons.value = res.data.coupon
+    }
+  } catch (error) {
+    showToast('error', 'Lỗi', error.response?.data?.error || 'Đã xảy ra lỗi')
   }
 }
 
+// Chọn coupon từ danh sách
+const selectCoupon = (code) => {
+  discountCode.value = code
+}
+
+// Áp dụng mã giảm giá
+const applyDiscount = async () => {
+  try {
+    const res = await axios.post('http://localhost:4000/api/coupon/apply', {
+      code: discountCode.value,
+      subTotal: subtotal.value
+    }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    })
+    if (res.data.success) {
+      discountAmount.value = res.data.discountAmount
+      showToast('success', 'Thành công', `Áp dụng mã ${discountCode.value}: Giảm ${formatPrice(discountAmount.value)}`)
+    }
+  } catch (error) {
+    showToast('error', 'Lỗi', error.response?.data?.message || 'Mã giảm giá không hợp lệ')
+  }
+}
 
 // Gọi API để tạo đơn hàng
 const handleCheckout = async() => {
@@ -269,6 +308,7 @@ const handleCheckout = async() => {
 
 
 onMounted(() => {
-  fetchCart()
+  fetchCart(),
+  fetchCoupons()
 })
 </script>

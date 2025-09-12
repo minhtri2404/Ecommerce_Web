@@ -1,6 +1,7 @@
 const Order = require("../models/orderModel")
 const Cart = require('../models/cartModel')
 const Product = require("../models/productModel");
+const Coupon = require("../models/couponModel")
 
 class OrderController{
     // Tạo đơn hàng
@@ -39,10 +40,36 @@ class OrderController{
             });
             }
             const subtotal  = orderProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
+
+            // Áp dung mã giảm giá nếu có
             let discountValue = 0;
-            if (discountCode === "SALE20") {
-                discountValue = subtotal * 0.2; // giảm 20%
+            let appliedCoupon = null;
+
+            if (discountCode) {
+                const coupon = await Coupon.findOne({ code: discountCode });
+
+                if (!coupon) {
+                    return res.status(400).json({ success: false, message: 'Mã giảm giá không tồn tại' });
+                }
+
+                const now = new Date();
+                if (!coupon.isActive || now < new Date(coupon.startDate) || now > new Date(coupon.endDate)) {
+                    return res.status(400).json({ success: false, message: 'Mã giảm giá hiện không khả dụng' });
+                }
+
+                if (coupon.usageLimit && coupon.usageLimit <= 0) {
+                    return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết lượt sử dụng' });
+                }
+
+                // Tính discount
+                if (coupon.discountType === 'percentage') {
+                    discountValue = subtotal * (coupon.discountValue / 100);
+                } else{
+                    discountValue = coupon.discountValue;
+                }
+                appliedCoupon = coupon;
             }
+
             const totalAmount = subtotal - discountValue;
 
             // 🔑 Xác định paymentStatus
@@ -60,6 +87,13 @@ class OrderController{
             });
 
             await newOrder.save();
+
+            // Giảm usageLimit của coupon nếu có
+            if (appliedCoupon && appliedCoupon.usageLimit > 0) {
+                appliedCoupon.usageLimit -= 1;
+                appliedCoupon.usedCount += 1;
+                await appliedCoupon.save();
+            }
 
             // Xóa giỏ hàng
             await Cart.findOneAndUpdate({ user: userId }, { items: [] });

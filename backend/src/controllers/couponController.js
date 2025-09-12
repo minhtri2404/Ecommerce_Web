@@ -96,7 +96,60 @@ class CouponController{
         } catch (error) {
             return res.status(500).json({success: false, error: 'Server Error'})
         }
-    }   
+    }
+
+    // Áp dụng mã giảm giá
+    applyCoupon = async(req, res) => {
+        try {
+            const {code, subTotal} = req.body
+
+            const coupon = await Coupon.findOne({code})
+            if (!coupon) {
+                return res.status(404).json({success: false, message: 'Mã giảm giá không tồn tại'})
+            }
+
+            // Kiểm tra ngày
+            const now = new Date()
+            if (!coupon.isActive || now < new Date(coupon.startDate) || now > new Date(coupon.endDate)) {
+                return res.status(400).json({ success: false, message: 'Mã giảm giá hiện không khả dụng' });
+            }
+
+            // Kiểm tra usage limit
+            if (coupon.usageLimit && coupon.usageLimit <= 0) {
+                return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết lượt sử dụng' });
+            }
+            
+            // Kiểm tra đơn hàng có đủ điều kiện tối thiểu
+            if(subTotal < coupon.minOrderAmount){
+                return res.status(400).json({
+                    success: false,
+                    message: `Đơn hàng tối thiểu ${coupon.minOrderAmount}₫ mới được áp dụng mã giảm giá`
+                })
+            }
+
+            // Tính discount
+            let discountAmount = 0;
+            if (coupon.discountType === 'percentage') {
+                discountAmount = subTotal * (coupon.discountValue / 100);
+            } else {
+                discountAmount = coupon.discountValue;
+            }
+
+            return res.status(200).json({
+                success: true,
+                discountAmount,
+                message: 'Áp dụng mã giảm giá thành công',
+                coupon: {
+                    code: coupon.code,
+                    discountType: coupon.discountType,
+                    discountValue: coupon.discountValue
+                }
+            })
+
+        } catch (error) {
+            return res.status(500).json({success: false, error: 'Server Error'})
+        }
+    }
 }
 
 
