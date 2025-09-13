@@ -56,8 +56,8 @@
                 <span>Thanh toán khi nhận hàng (COD)</span>
               </label>
               <label class="flex items-center gap-2">
-                <input type="radio" v-model="form.paymentMethod" value="credit" />
-                <span>Thẻ tín dụng</span>
+                <input type="radio" v-model="form.paymentMethod" value="momo" />
+                <span>Thanh toán bằng MoMo</span>
               </label>
             </div>
           </div>
@@ -175,7 +175,7 @@ const form = ref({
   email: "",
   phone: "",
   address: "",
-  cityState: "",
+  city: "",
   country: "Việt Nam",
   paymentMethod: "cod",
 })
@@ -294,10 +294,21 @@ const handleCheckout = async() => {
       headers: { Authorization: `Bearer ${token}` },
     })
     if (res.data.success) {
-      showToast('success', 'Thành công', res.data.message)
+      if (form.value.paymentMethod === "momo") {
+        const momoRes = await axios.post(`http://localhost:4000/api/payment/momo/${res.data.order._id}`, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        if (momoRes.data && momoRes.data.payUrl) {
+          window.location.href = momoRes.data.payUrl
+        }
+      } else{
+        // COD thì vẫn về trang my-orders
+        showToast('success', 'Thành công', res.data.message)
         setTimeout(() => {
-        router.push('/my-orders')
-      }, 2000)
+          router.push('/my-orders')
+        }, 2000)
+      }
     } else{
       showToast('error', 'Lỗi', res.data.message || 'Đã xảy ra lỗi khi tạo đơn hàng')
     }

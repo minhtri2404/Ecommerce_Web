@@ -33,6 +33,7 @@ import EditBlog from '../pages/admin/blog/blogEdit.vue'
 import CouponList from '../pages/admin/coupon/couponList.vue'
 import AddCoupon from '../pages/admin/coupon/couponAdd.vue'
 import EditCoupon from '../pages/admin/coupon/couponEdit.vue'
+import PaymentSuccess from '@/pages/customer/payment/PaymentSuccess.vue'
 const routes = [
   {
     path: '/',
@@ -49,7 +50,8 @@ const routes = [
       { path: 'my-orders', name: 'MyOrder', component: MyOrder},
       { path: 'about', name: 'About', component: About},
       { path: '/blog/:id', name: 'AboutDetail', component: AboutDetail},
-      { path: 'contact', name: 'Contact', component: Contact}
+      { path: 'contact', name: 'Contact', component: Contact},
+      { path: 'payment/success', name: 'PaymentSuccess', component: PaymentSuccess}
       // Thêm các route khác của khách hàng tại đây
     ]
   },

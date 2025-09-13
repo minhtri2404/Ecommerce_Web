@@ -72,8 +72,6 @@ class OrderController{
 
             const totalAmount = subtotal - discountValue;
 
-            // 🔑 Xác định paymentStatus
-            const paymentStatus = 'pending';
 
             const newOrder = new Order({
                 user: userId,
@@ -83,7 +81,7 @@ class OrderController{
                 discountAmount: discountValue,
                 shippingAddress,
                 paymentMethod,
-                paymentStatus,
+                paymentStatus: paymentMethod === "cod" ? "pending" : "pending", // momo vẫn là pending ban đầu
             });
 
             await newOrder.save();

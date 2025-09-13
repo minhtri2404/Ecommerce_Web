@@ -65,6 +65,11 @@ const startServer = async () => {
     //Localhost:4000/api/coupon
     const couponRoute = require('./src/routes/couponRoute')
     app.use('/api/coupon', couponRoute)
+
+    //Localhost:4000/api/payment
+    const paymentRoute = require('./src/routes/paymentRoute')
+    app.use('/api/payment', paymentRoute)
+
     
     app.get('/', (req, res) => {
       res.json({ message: 'Welcome' });
