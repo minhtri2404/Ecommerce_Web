@@ -16,8 +16,11 @@ import HeroSection from '@/components/Nav/ComHeroSection.vue'
 import Footer from '@/components/Footer/ComFooter.vue'
 const route = useRoute()
 
-const showNavBar = computed(() => true)
-const showFooter = computed(() => true)
+const showNavBar = computed(() => {
+  return !route.meta.hideNavBar
+})
+const showFooter = computed(() => !route.meta.hideFooter)
+
 
 // ✅ Kiểm tra nếu đang ở "/"
 const isHomePage = computed(() => route.path === '/')

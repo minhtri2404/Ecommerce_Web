@@ -91,6 +91,7 @@
         <!-- Dropdown content -->
         <div v-if="dropdownOpen" class="flex flex-col gap-2 pl-6">
           <router-link  v-if="!isAdmin" to="/my-orders" class="py-1">🛒 My Orders</router-link>
+          <router-link v-if="!isUser" to="/admin-dashboard" class="block px-4 py-2 hover:bg-gray-100 text-sm">🛒 Dashboard</router-link>
           <button @click="logout" class="text-left py-1">🚪 Logout</button>
         </div>
       </template>
